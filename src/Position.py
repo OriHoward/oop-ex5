@@ -1,3 +1,4 @@
+import os
 import random
 
 
@@ -32,3 +33,16 @@ class Position:
 
     def __str__(self):
         return "x={}, y={}, z={}".format(self._x, self._y, self._z)
+
+    def scale(self, proportions: dict):
+        screen_width = int(os.getenv("WIDTH")) - 50
+        screen_height = int(os.getenv("HEIGHT")) - 50
+        min_screen = 50
+        x_proportions = proportions.get("x_proportions")
+        y_proportions = proportions.get("y_proportions")
+        min_x, max_x = x_proportions
+        min_y, max_y = y_proportions
+
+        self._x = ((self._x - min_x) / (max_x - min_x)) * (screen_width - min_screen) + min_screen
+        # screen.get_height()
+        self._y = ((self._y - min_y) / (max_y - min_y)) * (screen_height - min_screen) + min_screen

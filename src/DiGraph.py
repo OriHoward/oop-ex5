@@ -104,3 +104,23 @@ class DiGraph:
 
     def __repr__(self):
         return f"Graph: |V|={self.v_size()}, |E|={self.e_size()}"
+
+    def create_proportion_mapping(self):
+        graph_proportions = {}
+        min_x = min_y = float("inf")
+        max_x = max_y = float("-inf")
+        for node in self._nodeMap.values():
+            node_pos = node.get_pos()
+            node_x, node_y = node_pos.get_x(), node_pos.get_y()
+            min_x = min(min_x, node_x)
+            min_y = min(min_y, node_y)
+            max_x = max(max_x, node_x)
+            max_y = max(max_y, node_y)
+        graph_proportions["x_proportions"] = (min_x, max_x)
+        graph_proportions["y_proportions"] = (min_y, max_y)
+        return graph_proportions
+
+    def scale_positions(self):
+        graph_proportions = self.create_proportion_mapping()
+        for node in self._nodeMap.values():
+            node.get_pos().scale(graph_proportions)
