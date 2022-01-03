@@ -23,6 +23,7 @@ def main():
     game_ui_handler.create_proportion_mapping(graphi)
     game_ui_handler.scale_positions(graphi.get_node_map().values())
     game_ui_handler.scale_positions(game_handler.parsed_pokemons)
+    game_ui_handler.scale_positions(game_handler.agents.values())
 
     game_handler.start_game()
     client_os = game_handler.get_client()
@@ -37,7 +38,10 @@ def main():
         game_ui_handler.draw_circles(node.get_pos(), node.get_key())
 
     for poke in game_handler.parsed_pokemons:
-        poke.draw(game_ui_handler.screen)
+        poke.draw(screen)
+
+    for agent in game_handler.agents.values():
+        agent.draw(screen)
 
     while game_handler.is_running() == 'true':
         print(client_os.is_running())
