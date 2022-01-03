@@ -4,6 +4,8 @@ from client import Client
 import os
 import json
 
+from pokemon import Pokemon
+
 
 class GameHandler:
 
@@ -11,6 +13,7 @@ class GameHandler:
         self.client = None
         self.graph_algo = GraphAlgo()
         self.agents: [Agent] = []
+        self.parsed_pokemons: list[Pokemon] = []
 
     def create_agents(self, num_of_agents):
         payload = {}
@@ -30,6 +33,21 @@ class GameHandler:
 
         except Exception as e:
             print(f"Couldn't parse game info : {e}")
+
+    def add_pokemon(self):
+        try:
+            pokemon_json = json.loads(self.client.get_pokemons())
+            pokemon_json = pokemon_json.get("Pokemons", [])
+            if pokemon_json is []:
+                raise ValueError("Bad JSON")
+            for pok in pokemon_json:
+                curr_pok = pok.get("Pokemon")
+                value = curr_pok.get("value")
+                _type = curr_pok.get("type")
+                pos = curr_pok.get("pos")
+                self.parsed_pokemons.append(Pokemon(value, _type, pos))
+        except Exception as e:
+            print(f"Couldn't parse pokemons : {e}")
 
     def init_connection(self):
         self.client = Client()
