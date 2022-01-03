@@ -4,6 +4,9 @@ from dotenv import load_dotenv
 import pygame
 from pygame import Color, gfxdraw, display, time, font
 
+from pokemon import Pokemon
+from Position import Position
+from GameUI import GameUI
 from GameHandler import GameHandler
 
 load_dotenv()
@@ -11,31 +14,30 @@ load_dotenv()
 
 def main():
     screen = display.set_mode((int(os.getenv("WIDTH")), int(os.getenv("HEIGHT"))))
-    screen.fill(Color(30, 30, 30))
-    icon = pygame.image.load(r'../misc/icon.png')
-    pygame.display.set_icon(icon)
-    pygame.font.init()
-    f = font.SysFont("Arial", 20, bold=True)
-    pygame.display.set_caption("Happy This Is the Last Assignment")
-    clock = time.Clock()
     game_handler = GameHandler()
     game_handler.init_connection()
     game_handler.parse_game_info()
-    game_handler.get_graph().scale_positions()
+    game_ui_handler = GameUI(screen)
+    graphi = game_handler.get_graph()
+
+    game_ui_handler.create_proportion_mapping(graphi)
+    game_ui_handler.scale_positions(graphi.get_node_map().values())
+    game_ui_handler.scale_positions(game_handler.parsed_pokemons)
+
     game_handler.start_game()
     client_os = game_handler.get_client()
-    for curr_edge in game_handler.get_graph().get_parsed_edges():
-        src = game_handler.get_graph().get_node(curr_edge.get_src())
-        dest = game_handler.get_graph().get_node(curr_edge.get_dest())
-        src_x, src_y = src.get_pos().get_scaled_x(), src.get_pos().get_scaled_y()
-        dest_x, dest_y = dest.get_pos().get_scaled_x(), dest.get_pos().get_scaled_y()
-        pygame.draw.line(screen, Color(255, 255, 255), (src_x, src_y), (dest_x, dest_y), width=2)
-    for node in game_handler.get_graph().get_node_map().values():
-        pos = node.get_pos()
-        gfxdraw.filled_circle(screen, int(pos.get_scaled_x()), int(pos.get_scaled_y()), 15, Color(128, 216, 255))
-        id_surface = f.render(str(node.get_key()), True, pygame.Color(222, 22, 22))
-        id_rect = id_surface.get_rect(center=(pos.get_scaled_x(), pos.get_scaled_y()))
-        screen.blit(id_surface, id_rect)
+    game_ui_handler.pygame_setup()
+
+    for curr_edge in graphi.get_parsed_edges():
+        src = graphi.get_node(curr_edge.get_src())
+        dest = graphi.get_node(curr_edge.get_dest())
+        game_ui_handler.draw_lines(src, dest)
+
+    for node in graphi.get_node_map().values():
+        game_ui_handler.draw_circles(node.get_pos(), node.get_key())
+
+    for poke in game_handler.parsed_pokemons:
+        poke.draw(game_ui_handler.screen)
 
     while game_handler.is_running() == 'true':
         print(client_os.is_running())
@@ -46,7 +48,7 @@ def main():
                 exit(0)
 
         display.update()
-        clock.tick(60)
+        game_ui_handler.clock.tick(60)
 
     # pokemons = client.get_pokemons()
     # agents = client.get_agents()
@@ -55,7 +57,7 @@ def main():
     # print(client.is_running())
     # print(client.time_to_end())
     #
-    # # only after the agents were added the start function actually starts the game
+    # # only after the agents were added the start function actually starts the game_ui_handler
     # client.add_agent("{\"id\":0}")
     #
     # client.start()
@@ -63,3 +65,13 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+p1 = Pokemon(5, 1, "35.19381366747377, 32.102419275630254, 0.0")
+p2 = Pokemon(5, 1, "35.19381366747377, 32.102419275630254, 0.0")
+p3 = Pokemon(6, 1, "35.187594216303474,32.10378225882353,0.0")
+print(p1 == p2)
+s = set()
+s.add(p1)
+s.add(p2)
+s.add(p3)
+print(s)

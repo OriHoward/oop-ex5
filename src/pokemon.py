@@ -1,5 +1,5 @@
 from Position import Position
-import hashlib
+import pygame
 
 
 class Pokemon:
@@ -10,6 +10,7 @@ class Pokemon:
         self._pos: Position = Position(*(pos.split(',')))
         self.is_active = True
         self.is_assigned = False
+        self.icon_path = "../misc/mew.png"
 
     def get_value(self):
         return self._value
@@ -27,3 +28,9 @@ class Pokemon:
 
     def update_assigned(self, new_status):
         self.is_assigned = new_status
+
+    def draw(self, screen):
+        icon = pygame.image.load(self.icon_path)
+        scaled_image = pygame.transform.scale(icon, (35, 35))
+        rect = scaled_image.get_rect(center=(self._pos.get_scaled_x(), self._pos.get_scaled_y()))
+        screen.blit(scaled_image, rect)
