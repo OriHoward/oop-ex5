@@ -53,6 +53,7 @@ class GraphAlgo():
         it returns True if the function has successfully loaded the graph and False otherwise.
         """
         try:
+            print(f"loading the following graph : {file_name}")
             self.graph = DiGraph()
             with open(file_name, 'r') as f:
                 json_dict = json.load(f)
