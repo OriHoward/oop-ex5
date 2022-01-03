@@ -1,9 +1,10 @@
 from GraphAlgo import GraphAlgo
+from GraphEdge import GraphEdge
 from agent import Agent
 from client import Client
 import os
 import json
-
+from Position import Position
 from pokemon import Pokemon
 
 
@@ -83,3 +84,43 @@ class GameHandler:
 
     def is_running(self):
         return Client.is_running(self.client)
+
+    def calculate_fastest_path(self, pokemon: Pokemon) -> (Agent, list):
+        chosen_agent = None
+        path_dist: float = None
+        min_load_factor = float('inf')
+        fastest_path: list = []
+        chosen_edge, src, dest = self.get_edge_path(pokemon)
+        for agent in self.agents.values():
+            dist, curr_path = self.graph_algo.shortest_path(agent.src, src)
+            curr_path.append(dest)
+            dist += chosen_edge.get_weight()
+            curr_load_factor = agent.calculate_load_factor(dist)
+            if curr_load_factor < min_load_factor:
+                min_load_factor = curr_load_factor
+                fastest_path = curr_path
+                chosen_agent = agent
+                path_dist = dist
+        chosen_agent.update_load_factor(path_dist)
+        return chosen_agent, fastest_path
+
+    def get_edge_path(self, pokemon) -> (GraphEdge, int, int):
+        curr_dest: int = None
+        chosen_edge: GraphEdge = None
+        for edge in self.get_graph().get_parsed_edges():
+            if Position.is_between(edge.get_src(), edge.get_dest(), pokemon.get_pos()):
+                chosen_edge = edge
+                if pokemon.get_type() == -1:
+                    curr_dest = max(edge.get_src(), edge.get_dest())
+                else:
+                    curr_dest = min(edge.get_src(), edge.get_dest())
+                break
+        if chosen_edge is None:
+            raise ValueError
+        if curr_dest == chosen_edge.get_dest():
+            return chosen_edge, chosen_edge.get_dest(), chosen_edge.get_src()
+        else:
+            return chosen_edge, chosen_edge.get_src(), chosen_edge.get_dest()
+
+    def choose_next_edge(self):
+        pass
