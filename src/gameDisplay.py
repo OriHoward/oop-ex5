@@ -5,13 +5,10 @@ from pygame import gfxdraw
 import pygame
 from pygame import *
 
-WIDTH, HEIGHT = 1080, 720
-
-PORT = 6666
 radius = 15
-HOST = '127.0.0.1'
+
 pygame.init()
-screen = display.set_mode((int(os.getenv("WIDTH")), int(os.getenv("HEIGHT"))), flags=RESIZABLE)
+screen = display.set_mode(int(os.getenv("WIDTH")), int(os.getenv("HEIGHT")), flags=RESIZABLE)
 clock = pygame.time.Clock()
 pygame.font.init()
 FONT = pygame.font.SysFont('Arial', 20, bold=True)
