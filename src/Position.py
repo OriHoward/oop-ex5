@@ -1,5 +1,7 @@
 import os
 import random
+from sys import float_info
+from math import dist
 
 
 def random_num():
@@ -44,5 +46,20 @@ class Position:
         min_y, max_y = y_proportions
 
         self._x = ((self._x - min_x) / (max_x - min_x)) * (screen_width - min_screen) + min_screen
-        # screen.get_height()
         self._y = ((self._y - min_y) / (max_y - min_y)) * (screen_height - min_screen) + min_screen
+
+    def distance(self, p):
+        """
+        Calculate distance from this position to a given position.
+        """
+        return dist((self._x, self._y), (p.get_x(), p.get_y()))
+
+    @staticmethod
+    def is_between(src, dest, p):
+        """
+        True if Position p is on the edge.
+        """
+        d1 = src.get_pos().distance(p)
+        d2 = dest.get_pos().distance(p)
+        d3 = src.get_pos().distance(dest.get_pos())
+        return True if d1 + d2 == d3 < float_info.epsilon else False
