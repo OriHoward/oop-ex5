@@ -127,5 +127,5 @@ class GameHandler:
 
     def choose_next_edge(self):
         for agent, path in self.agents_map.items():
-            if agent.dest != -1:
+            if agent.dest != -1 and path is not []:
                 self.client.choose_next_edge(f"agent_id{agent._id}, next_node_id:{path.pop(0)}")
