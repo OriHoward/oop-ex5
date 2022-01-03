@@ -40,3 +40,12 @@ class GameHandler:
 
     def start_game(self):
         self.client.start()
+
+    def get_graph(self):
+        try:
+            return self.graph_algo.get_graph()
+        except Exception as e:
+            print("error.. no graph was loaded from json")
+
+    def is_running(self):
+        return Client.is_running(self.client)
