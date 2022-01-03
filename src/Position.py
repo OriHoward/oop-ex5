@@ -1,7 +1,7 @@
 import os
 import random
 from sys import float_info
-from math import dist
+from math import dist, fabs
 
 
 def random_num():
@@ -69,8 +69,10 @@ class Position:
     def is_between(src, dest, p):
         """
         True if Position p is on the edge.
+        d1 + d2 = d3
+        abs(d1 + d2 - d3) <= eps
         """
         d1 = src.get_pos().distance(p)
         d2 = dest.get_pos().distance(p)
         d3 = src.get_pos().distance(dest.get_pos())
-        return True if d1 + d2 == d3 < float_info.epsilon else False
+        return True if fabs(d1 + d2 - d3) <= float_info.epsilon else False
