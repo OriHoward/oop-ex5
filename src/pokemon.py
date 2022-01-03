@@ -10,7 +10,7 @@ class Pokemon:
         self._pos: Position = Position(*(pos.split(',')))
         self.is_active = True
         self.is_assigned = False
-        self.icon_path = "../misc/mew.png"
+        self.icon_path = "../misc/mew.png" if _type > 0 else "../misc/dratini.png"
 
     def get_value(self):
         return self._value
