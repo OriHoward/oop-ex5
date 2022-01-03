@@ -15,6 +15,7 @@ class GameHandler:
         self.graph_algo = GraphAlgo()
         self.agents: dict[int, Agent] = {}
         self.parsed_pokemons: list[Pokemon] = []
+        self.agents_map: dict[Agent, list] = {}
 
     def update_agents(self):
         agents_info_dict = json.loads(self.client.get_agents())
@@ -102,6 +103,7 @@ class GameHandler:
                 chosen_agent = agent
                 path_dist = dist
         chosen_agent.update_load_factor(path_dist)
+        self.agents_map[chosen_agent] = fastest_path
         return chosen_agent, fastest_path
 
     def get_edge_path(self, pokemon) -> (GraphEdge, int, int):
