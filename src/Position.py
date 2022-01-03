@@ -29,6 +29,12 @@ class Position:
     def get_y(self):
         return self._y
 
+    def get_scaled_x(self):
+        return self.scaled_x
+
+    def get_scaled_y(self):
+        return self.scaled_y
+
     def get_z(self):
         return self._z
 
