@@ -48,11 +48,12 @@ class GameHandler:
                 raise ValueError("Bad JSON")
             self.graph_algo.load_from_json(os.path.join("../", game_info.get("graph")))
             self.create_agents(game_info.get("agents", 0))
+            self.add_pokemons()
 
         except Exception as e:
             print(f"Couldn't parse game info : {e}")
 
-    def add_pokemon(self):
+    def add_pokemons(self):
         try:
             pokemon_json = json.loads(self.client.get_pokemons())
             pokemon_json = pokemon_json.get("Pokemons", [])
