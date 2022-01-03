@@ -27,14 +27,14 @@ def main():
     for curr_edge in game_handler.get_graph().get_parsed_edges():
         src = game_handler.get_graph().get_node(curr_edge.get_src())
         dest = game_handler.get_graph().get_node(curr_edge.get_dest())
-        src_x, src_y = src.get_pos().get_x(), src.get_pos().get_y()
-        dest_x, dest_y = dest.get_pos().get_x(), dest.get_pos().get_y()
+        src_x, src_y = src.get_pos().get_scaled_x(), src.get_pos().get_scaled_y()
+        dest_x, dest_y = dest.get_pos().get_scaled_x(), dest.get_pos().get_scaled_y()
         pygame.draw.line(screen, Color(255, 255, 255), (src_x, src_y), (dest_x, dest_y), width=2)
     for node in game_handler.get_graph().get_node_map().values():
         pos = node.get_pos()
-        gfxdraw.filled_circle(screen, int(pos.get_x()), int(pos.get_y()), 15, Color(128, 216, 255))
+        gfxdraw.filled_circle(screen, int(pos.get_scaled_x()), int(pos.get_scaled_y()), 15, Color(128, 216, 255))
         id_surface = f.render(str(node.get_key()), True, pygame.Color(222, 22, 22))
-        id_rect = id_surface.get_rect(center=(pos.get_x(), pos.get_y()))
+        id_rect = id_surface.get_rect(center=(pos.get_scaled_x(), pos.get_scaled_y()))
         screen.blit(id_surface, id_rect)
 
     while game_handler.is_running() == 'true':
