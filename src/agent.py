@@ -18,6 +18,8 @@ class Agent:
         else:
             self._pos = Position()
         self.icon_path = "../misc/pokeball.png"
+        self.refresh_interval = 0
+        self.curr_interval = 0
 
     def update_agent(self, value, src, dest, speed, pos):
         self.value = value
@@ -34,6 +36,9 @@ class Agent:
 
     def get_pos(self):
         return self._pos
+
+    def set_refresh_interval(self, dist):
+        self.refresh_interval = (dist / self.speed) / 5
 
     def __repr__(self):
         return f"Agent: {self._id}, {self.value}, {self._pos}, {self.src}"

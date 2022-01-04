@@ -4,7 +4,6 @@ from agent import Agent
 from client import Client
 import os
 import json
-from Position import Position
 from pokemon import Pokemon
 
 
@@ -17,11 +16,15 @@ class GameHandler:
         self.parsed_pokemons: dict[tuple[float, float, int], Pokemon] = {}
         self.agents_map: dict[Agent, list] = {}
 
-    def update_agents(self):
+    def update_agents(self, payload=None):
         try:
-            agents_info_dict = json.loads(self.client.get_agents())
+            if payload is None:
+                agents_info_dict = json.loads(self.client.get_agents())
+            else:
+                agents_info_dict = json.loads(payload)
+
             for agent_item in agents_info_dict.get("Agents", []):
-                agent_info = agent_item.get("Agent")
+                agent_info = agent_item.get("Agent", None)
                 if agent_info is None:
                     continue
                 curr_agent = self.agents.get(agent_info.get('id'), None)
@@ -29,6 +32,7 @@ class GameHandler:
                     continue
                 del agent_info["id"]
                 curr_agent.update_agent(**agent_info)
+
         except Exception as e:
             print(f"Bad agents Json from Server {e}")
 
@@ -137,8 +141,15 @@ class GameHandler:
         return chosen_edge
 
     def choose_next_edge(self):
+        payload_list = []
         for agent, path in self.agents_map.items():
             if agent.dest == -1 and len(path) > 0:
-                kus_rabak = {"agent_id": agent._id, "next_node_id": path.pop(0)}
-                self.client.choose_next_edge(json.dumps(kus_rabak))
-        self.client.move()
+                new_dest = path.pop(0)
+                dist, _ = self.graph_algo.shortest_path(agent.src, new_dest)
+                agent.set_refresh_interval(dist)
+                payload = {"agent_id": agent._id, "next_node_id": new_dest}
+                payload_list.append(payload)
+        if bool(payload_list):
+            for payload in payload_list:
+                self.client.choose_next_edge(json.dumps(payload))
+            self.client.move()

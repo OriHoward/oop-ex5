@@ -48,6 +48,11 @@ def main():
             game_ui_handler.draw(poke_to_draw)
 
         for agent_to_draw in game_handler.agents.values():
+            if agent_to_draw.curr_interval < agent_to_draw.refresh_interval:
+                agent_to_draw.curr_interval += agent_to_draw.refresh_interval / 10
+            else:
+                client_os.move()
+                agent_to_draw.curr_interval = 0
             game_ui_handler.draw(agent_to_draw)
 
         game_handler.update_pokemons()
@@ -57,6 +62,7 @@ def main():
         game_handler.update_agents()
 
         display.update()
+        print(client_os.get_info())
         game_ui_handler.clock.tick(60)
 
 
