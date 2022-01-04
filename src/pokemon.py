@@ -1,8 +1,9 @@
+from math import fabs
+from sys import float_info
+
+from GraphEdge import GraphEdge
 from GraphNode import GraphNode
 from Position import Position
-import pygame
-from sys import float_info
-from math import fabs
 
 
 class Pokemon:
@@ -13,6 +14,7 @@ class Pokemon:
         self._pos: Position = Position(*(pos.split(',')))
         self.is_active = True
         self.is_assigned = False
+        self.edge = None
         self.icon_path = "../misc/mew.png" if _type > 0 else "../misc/bullbasaur.png"
 
     def get_value(self):
@@ -31,6 +33,12 @@ class Pokemon:
 
     def set_assigned(self, new_status):
         self.is_assigned = new_status
+
+    def set_edge(self, edge: GraphEdge):
+        self.edge = edge
+
+    def get_edge(self) -> GraphEdge:
+        return self.edge
 
     def get_identifier(self):
         return self._pos.get_x(), self._pos.get_y(), self.get_type()
