@@ -24,6 +24,7 @@ class TestGameHandler(TestCase):
         self.game_handler.client.get_agents = MagicMock(return_value=json.dumps(self.test_agent_data))
         self.game_handler.client.add_agent = MagicMock(return_value="{}")
         self.game_handler.client.add_pokemons = MagicMock(return_value="{}")
+        self.game_handler.client.is_running = MagicMock(return_value=True)
 
     def test_update_agents(self):
         self.fail()
@@ -42,9 +43,6 @@ class TestGameHandler(TestCase):
     def test_update_pokemons(self):
         self.fail()
 
-    def test_init_connection(self):
-        self.fail()
-
     def test_get_client(self):
         self.fail()
 
@@ -55,7 +53,7 @@ class TestGameHandler(TestCase):
         self.fail()
 
     def test_is_running(self):
-        self.fail()
+        self.assertTrue(self.game_handler.is_running())
 
     def test_calculate_fastest_path(self):
         self.fail()

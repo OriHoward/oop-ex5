@@ -107,7 +107,7 @@ class GameHandler:
             print("error.. no graph was loaded from json")
 
     def is_running(self):
-        return Client.is_running(self.client)
+        return self.client.is_running()
 
     def calculate_fastest_path(self, pokemon: Pokemon):
         chosen_agent = None
