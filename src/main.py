@@ -1,13 +1,11 @@
 import os
 
-from dotenv import load_dotenv
 import pygame
+from dotenv import load_dotenv
 from pygame import display
 
-from pokemon import Pokemon
-from GameUI import GameUI
 from GameHandler import GameHandler
-import json
+from GameUI import GameUI
 
 load_dotenv()
 
@@ -31,6 +29,7 @@ def main():
                 pygame.quit()
                 exit(0)
 
+        game_handler.update_agents()
         game_ui_handler.create_proportion_mapping(graphi)
         game_ui_handler.scale_positions(graphi.get_node_map().values())
         game_ui_handler.scale_positions(game_handler.parsed_pokemons.values())
@@ -55,14 +54,22 @@ def main():
                 agent_to_draw.curr_interval = 0
             game_ui_handler.draw(agent_to_draw)
 
-        game_handler.update_pokemons()
-        game_handler.calculate_fastest_path()
-
-        game_handler.choose_next_edge()
         game_handler.update_agents()
+        game_ui_handler.scale_positions(game_handler.agents.values())
+        game_handler.update_pokemons()
+        # lst = [p.get_pos() for p in game_handler.parsed_pokemons.values()]
+        # print(lst)
+        game_handler.find_path()
+        game_handler.choose_next_edge()
+
+        # time.sleep(0.2)
+        # game_handler.client.move()
+
+        # print(game_handler.client.get_info())
+        # print(game_handler.agents_map)
 
         display.update()
-        print(client_os.get_info())
+        # print(client_os.get_info())
         game_ui_handler.clock.tick(60)
 
 
