@@ -44,8 +44,8 @@ class Position:
     def get_json_format_str(self):
         return f"{self._x},{self._y},{self._z}"
 
-    def __str__(self):
-        return "x={}, y={}, z={}".format(self._x, self._y, self._z)
+    def __repr__(self):
+        return f"x={self._x}, y={self._y}, z={self._z}"
 
     def scale(self, proportions: dict):
         screen_width = int(os.getenv("WIDTH")) - 50
