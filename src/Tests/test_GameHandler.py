@@ -23,7 +23,7 @@ class TestGameHandler(TestCase):
         self.game_handler.client.get_pokemons = MagicMock(return_value=json.dumps(self.test_pokemon_data))
         self.game_handler.client.get_agents = MagicMock(return_value=json.dumps(self.test_agent_data))
         self.game_handler.client.add_agent = MagicMock(return_value="{}")
-        self.game_handler.client.add_pokemons = MagicMock(return_value="{}")
+        self.game_handler.client.update_pokemons = MagicMock(return_value="{}")
         self.game_handler.client.is_running = MagicMock(return_value=True)
 
     def test_update_agents(self):
@@ -37,16 +37,16 @@ class TestGameHandler(TestCase):
         self.assertEqual(1, len(self.game_handler.parsed_pokemons.values()))
         self.assertEqual(2, len(self.game_handler.agents.values()))
 
-    def test_add_pokemons(self):
+    def test_update_pokemons(self):
         with open('TestData/test-pokemon-data.json') as test_f:
             test_case_data = json.load(test_f)
-        test_case_data["type"] = 1
+        pokemon_list = test_case_data.get("Pokemons")
+        pokemon_list.append(json.loads(json.dumps(pokemon_list[0])))
+        pokemon_list[1]["Pokemon"]["type"] = 1
         self.game_handler.client.get_pokemons = MagicMock(return_value=json.dumps(test_case_data))
-        self.game_handler.add_pokemons()
-        self.fail()
-
-    def test_update_pokemons(self):
-        self.fail()
+        self.game_handler.update_pokemons()
+        self.game_handler.update_pokemons()
+        self.assertEqual(2, len(self.game_handler.parsed_pokemons.values()))
 
     def test_get_client(self):
         self.fail()
