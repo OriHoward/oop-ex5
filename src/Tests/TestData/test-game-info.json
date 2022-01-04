@@ -1,0 +1,7 @@
+{
+  "GameServer": {
+    "graph": "../data/A0",
+    "agents": 2
+
+  }
+}

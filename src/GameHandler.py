@@ -11,7 +11,7 @@ from pokemon import Pokemon
 class GameHandler:
 
     def __init__(self):
-        self.client = None
+        self.client = Client()
         self.graph_algo = GraphAlgo()
         self.agents: dict[int, Agent] = {}
         self.parsed_pokemons: dict[tuple[float, float, int], Pokemon] = {}
@@ -92,7 +92,6 @@ class GameHandler:
             print(f"Couldn't parse pokemons : {e}")
 
     def init_connection(self):
-        self.client = Client()
         self.client.start_connection(os.getenv("HOST"), int(os.getenv("PORT")))
 
     def get_client(self):
@@ -108,7 +107,7 @@ class GameHandler:
             print("error.. no graph was loaded from json")
 
     def is_running(self):
-        return Client.is_running(self.client)
+        return self.client.is_running()
 
     def calculate_fastest_path(self):
         chosen_agent = None
