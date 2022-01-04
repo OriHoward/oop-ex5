@@ -45,8 +45,8 @@ def main():
             game_ui_handler.draw_circles(node.get_pos(), node.get_key())
 
         game_handler.update_pokemons()
-        for poke in game_handler.parsed_pokemons.values():
-            game_handler.calculate_fastest_path(poke)
+        game_handler.calculate_fastest_path()
+
         game_handler.choose_next_edge()
 
         for obj_to_draw in list(game_handler.agents.values()) + list(game_handler.parsed_pokemons.values()):

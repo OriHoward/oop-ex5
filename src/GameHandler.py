@@ -110,27 +110,34 @@ class GameHandler:
     def is_running(self):
         return Client.is_running(self.client)
 
-    def calculate_fastest_path(self, pokemon: Pokemon):
+    def calculate_fastest_path(self):
         chosen_agent = None
         path_dist: float = None
+        chosen_dist: float = float('inf')
         min_load_factor = float('inf')
         fastest_path: list = []
-        chosen_edge = self.get_edge_path(pokemon)
-        for agent in self.agents.values():
-            if len(self.agents_map.get(agent, [])) == 0:
-                dist, curr_path = self.graph_algo.shortest_path(agent.src, chosen_edge.get_src())
-                if chosen_edge.get_dest() not in curr_path:
-                    curr_path.append(chosen_edge.get_dest())
-                    dist += chosen_edge.get_weight()
-                curr_load_factor = agent.calculate_load_factor(dist)
-                if curr_load_factor < min_load_factor:
-                    min_load_factor = curr_load_factor
-                    fastest_path = curr_path
-                    chosen_agent = agent
-                    path_dist = dist
-        if chosen_agent is not None:
-            chosen_agent.update_load_factor(path_dist)
-            self.agents_map[chosen_agent] = fastest_path
+        chosen_path: list = []
+        for curr_pok in self.parsed_pokemons.values():
+            chosen_edge = self.get_edge_path(curr_pok)
+            for agent in self.agents.values():
+                if len(self.agents_map.get(agent, [])) == 0:
+                    dist, curr_path = self.graph_algo.shortest_path(agent.src, chosen_edge.get_src())
+                    if chosen_edge.get_dest() not in curr_path:
+                        curr_path.append(chosen_edge.get_dest())
+                        dist += chosen_edge.get_weight()
+                    curr_load_factor = agent.calculate_load_factor(dist)
+                    if curr_load_factor < min_load_factor:
+                        min_load_factor = curr_load_factor
+                        fastest_path = curr_path
+                        chosen_agent = agent
+                        path_dist = dist
+            if chosen_agent is not None:
+                if path_dist < chosen_dist:
+                    chosen_dist = path_dist
+                    chosen_path = fastest_path
+        if len(chosen_path) > 0 and chosen_dist < float('inf'):
+            chosen_agent.update_load_factor(chosen_dist)
+            self.agents_map[chosen_agent] = chosen_path
 
     def get_edge_path(self, pokemon) -> (GraphEdge, int, int):
         chosen_edge: GraphEdge = None
