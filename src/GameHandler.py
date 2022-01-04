@@ -115,12 +115,13 @@ class GameHandler:
         path_dist: float = None
         min_load_factor = float('inf')
         fastest_path: list = []
-        chosen_edge, src, dest = self.get_edge_path(pokemon)
+        chosen_edge = self.get_edge_path(pokemon)
         for agent in self.agents.values():
             if len(self.agents_map.get(agent, [])) == 0:
-                dist, curr_path = self.graph_algo.shortest_path(agent.src, src)
-                curr_path.append(dest)
-                dist += chosen_edge.get_weight()
+                dist, curr_path = self.graph_algo.shortest_path(agent.src, chosen_edge.get_src())
+                if chosen_edge.get_dest() not in curr_path:
+                    curr_path.append(chosen_edge.get_dest())
+                    dist += chosen_edge.get_weight()
                 curr_load_factor = agent.calculate_load_factor(dist)
                 if curr_load_factor < min_load_factor:
                     min_load_factor = curr_load_factor
@@ -132,28 +133,23 @@ class GameHandler:
             self.agents_map[chosen_agent] = fastest_path
 
     def get_edge_path(self, pokemon) -> (GraphEdge, int, int):
-        curr_dest: int = None
         chosen_edge: GraphEdge = None
         for edge in self.get_graph().get_parsed_edges():
             src_node, dest_node = self.get_graph().get_node(edge.get_src()), self.get_graph().get_node(edge.get_dest())
-
             if pokemon.is_between(src_node, dest_node):
-                chosen_edge = edge
+                min_id, max_id = min(edge.get_src(), edge.get_dest()), max(edge.get_src(), edge.get_dest())
                 if pokemon.get_type() == -1:
-                    curr_dest = max(edge.get_src(), edge.get_dest())
+                    chosen_edge = self.get_graph().get_edge(min_id, max_id)
                 else:
-                    curr_dest = min(edge.get_src(), edge.get_dest())
+                    chosen_edge = self.get_graph().get_edge(max_id, min_id)
                 break
         if chosen_edge is None:
             raise ValueError
-        if curr_dest == chosen_edge.get_dest():
-            return chosen_edge, chosen_edge.get_dest(), chosen_edge.get_src()
-        else:
-            return chosen_edge, chosen_edge.get_src(), chosen_edge.get_dest()
+        return chosen_edge
 
     def choose_next_edge(self):
         for agent, path in self.agents_map.items():
-            if agent.dest == -1 and path is not []:
+            if agent.dest == -1 and len(path) > 0:
                 kus_rabak = {"agent_id": agent._id, "next_node_id": path.pop(0)}
                 self.client.choose_next_edge(json.dumps(kus_rabak))
-            self.client.move()
+        self.client.move()
