@@ -48,9 +48,6 @@ class TestGameHandler(TestCase):
         self.game_handler.update_pokemons()
         self.assertEqual(2, len(self.game_handler.parsed_pokemons.values()))
 
-    def test_get_client(self):
-        self.fail()
-
     def test_start_game(self):
         self.fail()
 
