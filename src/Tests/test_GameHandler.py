@@ -38,6 +38,11 @@ class TestGameHandler(TestCase):
         self.assertEqual(2, len(self.game_handler.agents.values()))
 
     def test_add_pokemons(self):
+        with open('TestData/test-pokemon-data.json') as test_f:
+            test_case_data = json.load(test_f)
+        test_case_data["type"] = 1
+        self.game_handler.client.get_pokemons = MagicMock(return_value=json.dumps(test_case_data))
+        self.game_handler.add_pokemons()
         self.fail()
 
     def test_update_pokemons(self):

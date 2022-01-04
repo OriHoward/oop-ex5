@@ -62,8 +62,6 @@ class GameHandler:
         try:
             pokemon_json = json.loads(self.client.get_pokemons())
             pokemon_json = pokemon_json.get("Pokemons", [])
-            if pokemon_json is []:
-                raise ValueError("Bad JSON")
             for pok in pokemon_json:
                 curr_pok = pok.get("Pokemon")
                 new_pokemon = Pokemon(curr_pok.get("value"), curr_pok.get("type"), curr_pok.get("pos"))
@@ -76,8 +74,6 @@ class GameHandler:
             updated_pokemons = {}
             pokemon_json = json.loads(self.client.get_pokemons())
             pokemon_json = pokemon_json.get("Pokemons", [])
-            if pokemon_json is []:
-                raise ValueError("Bad JSON")
             for pok in pokemon_json:
                 curr_poke = pok.get("Pokemon")
                 new_pokemon = Pokemon(curr_poke.get("value"), curr_poke.get("type"), curr_poke.get("pos"))
