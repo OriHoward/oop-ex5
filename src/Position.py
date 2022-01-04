@@ -1,7 +1,7 @@
 import os
 import random
-from sys import float_info
-from math import dist, fabs
+
+from math import dist
 
 
 def random_num():
@@ -59,20 +59,8 @@ class Position:
         self.scaled_x = ((self._x - min_x) / (max_x - min_x)) * (screen_width - min_screen) + min_screen
         self.scaled_y = ((self._y - min_y) / (max_y - min_y)) * (screen_height - min_screen) + min_screen
 
-    def distance(self, p):
+    def distance(self, p) -> float:
         """
         Calculate distance from this position to a given position.
         """
         return dist((self._x, self._y), (p.get_x(), p.get_y()))
-
-    @staticmethod
-    def is_between(src, dest, p):
-        """
-        True if Position p is on the edge.
-        d1 + d2 = d3
-        abs(d1 + d2 - d3) <= eps
-        """
-        d1 = src.get_pos().distance(p)
-        d2 = dest.get_pos().distance(p)
-        d3 = src.get_pos().distance(dest.get_pos())
-        return True if fabs(d1 + d2 - d3) <= float_info.epsilon else False

@@ -18,6 +18,7 @@ class GameUI:
 
     def __init__(self, screen, screen_color=COLOR, f=FONT, caption: str = CAPTION, icon=ICON):
         self.screen = screen
+        self.screen_color = screen_color
         self.screen.fill(screen_color)
         self.f = f
         self.caption = caption
@@ -58,9 +59,18 @@ class GameUI:
         graph_proportions["y_proportions"] = (min_y, max_y)
         self.proportions = graph_proportions
 
+    def draw(self, obj_to_draw):
+        icon = pygame.image.load(obj_to_draw.icon_path)
+        scaled_image = pygame.transform.scale(icon, (35, 35))
+        rect = scaled_image.get_rect(center=(obj_to_draw._pos.get_scaled_x(), obj_to_draw._pos.get_scaled_y()))
+        self.screen.blit(scaled_image, rect)
+
     def scale_positions(self, objects_to_scale):
         for node in objects_to_scale:
             node.get_pos().scale(self.proportions)
+
+    def reset_color(self):
+        self.screen.fill(self.screen_color)
 # button class?
 # draw nodes
 # draw edges

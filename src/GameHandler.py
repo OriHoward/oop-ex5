@@ -36,7 +36,9 @@ class GameHandler:
             start_pos = self.get_graph().get_node(num).get_pos().get_as_tuple()
             # the id in the payload is the id of the start node of the pokemon
             payload["id"] = num
-            self.agents[num] = Agent(num)
+            new_agent = Agent(num)
+            self.agents[num] = new_agent
+            self.agents_map[new_agent] = []
             self.client.add_agent(json.dumps(payload))
         self.update_agents()
 
@@ -94,7 +96,7 @@ class GameHandler:
         fastest_path: list = []
         chosen_edge, src, dest = self.get_edge_path(pokemon)
         for agent in self.agents.values():
-            if len(self.agents_map.get(agent)) == 0:
+            if len(self.agents_map.get(agent, [])) == 0:
                 dist, curr_path = self.graph_algo.shortest_path(agent.src, src)
                 curr_path.append(dest)
                 dist += chosen_edge.get_weight()
@@ -112,7 +114,9 @@ class GameHandler:
         curr_dest: int = None
         chosen_edge: GraphEdge = None
         for edge in self.get_graph().get_parsed_edges():
-            if Position.is_between(edge.get_src(), edge.get_dest(), pokemon.get_pos()):
+            src_node, dest_node = self.get_graph().get_node(edge.get_src()), self.get_graph().get_node(edge.get_dest())
+
+            if pokemon.is_between(src_node, dest_node):
                 chosen_edge = edge
                 if pokemon.get_type() == -1:
                     curr_dest = max(edge.get_src(), edge.get_dest())
@@ -128,5 +132,7 @@ class GameHandler:
 
     def choose_next_edge(self):
         for agent, path in self.agents_map.items():
-            if agent.dest != -1 and path is not []:
-                self.client.choose_next_edge(f"agent_id{agent._id}, next_node_id:{path.pop(0)}")
+            if agent.dest == -1 and path is not []:
+                kus_rabak = {"agent_id": agent._id, "next_node_id": path.pop(0)}
+                self.client.choose_next_edge(json.dumps(kus_rabak))
+            self.client.move()

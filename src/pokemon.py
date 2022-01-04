@@ -1,5 +1,8 @@
+from GraphNode import GraphNode
 from Position import Position
 import pygame
+from sys import float_info
+from math import fabs
 
 
 class Pokemon:
@@ -29,8 +32,15 @@ class Pokemon:
     def update_assigned(self, new_status):
         self.is_assigned = new_status
 
-    def draw(self, screen):
-        icon = pygame.image.load(self.icon_path)
-        scaled_image = pygame.transform.scale(icon, (35, 35))
-        rect = scaled_image.get_rect(center=(self._pos.get_scaled_x(), self._pos.get_scaled_y()))
-        screen.blit(scaled_image, rect)
+
+
+    def is_between(self, src: GraphNode, dest: GraphNode) -> bool:
+        """
+        True if Position p is on the edge.
+        d1 + d2 = d3
+        abs(d1 + d2 - d3) <= eps
+        """
+        d1 = src.get_pos().distance(self._pos)
+        d2 = dest.get_pos().distance(self._pos)
+        d3 = src.get_pos().distance(dest.get_pos())
+        return True if fabs(d1 + d2 - d3) <= float_info.epsilon else False
