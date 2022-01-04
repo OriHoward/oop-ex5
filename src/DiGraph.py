@@ -23,12 +23,10 @@ class DiGraph:
 
     def get_edge(self, src: int, dest: int):
         """Returns an edge in the graph (if it exists)"""
-        node = self._nodeMap.get(src)
+        node = self._nodeMap.get(src, None)
         if node is None:
             return None
-        if node.get_destMap().get(dest) is None:
-            return None
-        return node.get_destMap().get(dest)
+        return node.get_destMap().get(dest, None)
 
     def v_size(self) -> int:
         """Returns number of nodes in the graph"""
@@ -104,6 +102,3 @@ class DiGraph:
 
     def __repr__(self):
         return f"Graph: |V|={self.v_size()}, |E|={self.e_size()}"
-
-
-
