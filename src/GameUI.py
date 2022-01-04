@@ -1,10 +1,7 @@
-import os
 import pygame
-from pygame import Surface, display, Color, font, time, gfxdraw
+from pygame import Color, font, time, gfxdraw
 
 from DiGraph import DiGraph
-from GraphNode import GraphNode
-from GraphEdge import GraphEdge
 
 pygame.font.init()
 
@@ -19,7 +16,6 @@ class GameUI:
     def __init__(self, screen, screen_color=COLOR, f=FONT, caption: str = CAPTION, icon=ICON):
         self.screen = screen
         self.screen_color = screen_color
-        self.screen.fill(screen_color)
         self.f = f
         self.caption = caption
         self.icon = icon
@@ -71,6 +67,3 @@ class GameUI:
 
     def reset_color(self):
         self.screen.fill(self.screen_color)
-# button class?
-# draw nodes
-# draw edges
