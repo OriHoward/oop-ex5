@@ -34,9 +34,8 @@ class GameHandler:
 
     def create_agents(self, num_of_agents):
         payload = {}
-        print(f"Initialising {num_of_agents} agents")
+        print(f"Initializing {num_of_agents} agents")
         for num in range(num_of_agents):
-            start_pos = self.get_graph().get_node(num).get_pos().get_as_tuple()
             # the id in the payload is the id of the start node of the pokemon
             payload["id"] = num
             new_agent = Agent(num)
@@ -53,21 +52,10 @@ class GameHandler:
                 raise ValueError("Bad JSON")
             self.graph_algo.load_from_json(os.path.join("../", game_info.get("graph")))
             self.create_agents(game_info.get("agents", 0))
-            self.add_pokemons()
+            self.update_pokemons()
 
         except Exception as e:
             print(f"Couldn't parse game info : {e}")
-
-    def add_pokemons(self):
-        try:
-            pokemon_json = json.loads(self.client.get_pokemons())
-            pokemon_json = pokemon_json.get("Pokemons", [])
-            for pok in pokemon_json:
-                curr_pok = pok.get("Pokemon")
-                new_pokemon = Pokemon(curr_pok.get("value"), curr_pok.get("type"), curr_pok.get("pos"))
-                self.parsed_pokemons[new_pokemon.get_identifier()] = new_pokemon
-        except Exception as e:
-            print(f"Couldn't parse pokemons : {e}")
 
     def update_pokemons(self):
         try:
@@ -82,7 +70,6 @@ class GameHandler:
                     updated_pokemons[identifier] = self.parsed_pokemons.get(identifier)
                 else:
                     updated_pokemons[identifier] = new_pokemon
-
             self.parsed_pokemons = updated_pokemons
         except Exception as e:
             print(f"Couldn't parse pokemons : {e}")
