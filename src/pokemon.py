@@ -13,7 +13,7 @@ class Pokemon:
         self._pos: Position = Position(*(pos.split(',')))
         self.is_active = True
         self.is_assigned = False
-        self.icon_path = "../misc/mew.png" if _type > 0 else "../misc/dratini.png"
+        self.icon_path = "../misc/mew.png" if _type > 0 else "../misc/bullbasaur.png"
 
     def get_value(self):
         return self._value
@@ -26,13 +26,14 @@ class Pokemon:
             raise Exception
         return self._pos
 
-    def update_activity(self, new_status):
+    def set_activity(self, new_status):
         self.is_active = new_status
 
-    def update_assigned(self, new_status):
+    def set_assigned(self, new_status):
         self.is_assigned = new_status
 
-
+    def get_identifier(self):
+        return self._pos.get_x(), self._pos.get_y(), self.get_type()
 
     def is_between(self, src: GraphNode, dest: GraphNode) -> bool:
         """

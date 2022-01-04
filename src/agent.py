@@ -35,9 +35,3 @@ class Agent:
 
     def get_pos(self):
         return self._pos
-
-    def draw(self, screen):
-        icon = pygame.image.load(self.icon_path)
-        scaled_image = pygame.transform.scale(icon, (35, 35))
-        rect = scaled_image.get_rect(center=(self._pos.get_scaled_x(), self._pos.get_scaled_y()))
-        screen.blit(scaled_image, rect)

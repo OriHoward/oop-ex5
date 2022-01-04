@@ -14,20 +14,23 @@ class GameHandler:
         self.client = None
         self.graph_algo = GraphAlgo()
         self.agents: dict[int, Agent] = {}
-        self.parsed_pokemons: list[Pokemon] = []
+        self.parsed_pokemons: dict[tuple[float, float, int], Pokemon] = {}
         self.agents_map: dict[Agent, list] = {}
 
     def update_agents(self):
-        agents_info_dict = json.loads(self.client.get_agents())
-        for agent_item in agents_info_dict.get("Agents", []):
-            agent_info = agent_item.get("Agent")
-            if agent_info is None:
-                continue
-            curr_agent = self.agents.get(agent_info.get('id'), None)
-            if curr_agent is None:
-                continue
-            del agent_info["id"]
-            curr_agent.update_agent(**agent_info)
+        try:
+            agents_info_dict = json.loads(self.client.get_agents())
+            for agent_item in agents_info_dict.get("Agents", []):
+                agent_info = agent_item.get("Agent")
+                if agent_info is None:
+                    continue
+                curr_agent = self.agents.get(agent_info.get('id'), None)
+                if curr_agent is None:
+                    continue
+                del agent_info["id"]
+                curr_agent.update_agent(**agent_info)
+        except Exception as e:
+            print(f"Bad agents Json from Server {e}")
 
     def create_agents(self, num_of_agents):
         payload = {}
@@ -63,10 +66,28 @@ class GameHandler:
                 raise ValueError("Bad JSON")
             for pok in pokemon_json:
                 curr_pok = pok.get("Pokemon")
-                value = curr_pok.get("value")
-                _type = curr_pok.get("type")
-                pos = curr_pok.get("pos")
-                self.parsed_pokemons.append(Pokemon(value, _type, pos))
+                new_pokemon = Pokemon(curr_pok.get("value"), curr_pok.get("type"), curr_pok.get("pos"))
+                self.parsed_pokemons[new_pokemon.get_identifier()] = new_pokemon
+        except Exception as e:
+            print(f"Couldn't parse pokemons : {e}")
+
+    def update_pokemons(self):
+        try:
+            updated_pokemons = {}
+            pokemon_json = json.loads(self.client.get_pokemons())
+            pokemon_json = pokemon_json.get("Pokemons", [])
+            if pokemon_json is []:
+                raise ValueError("Bad JSON")
+            for pok in pokemon_json:
+                curr_poke = pok.get("Pokemon")
+                new_pokemon = Pokemon(curr_poke.get("value"), curr_poke.get("type"), curr_poke.get("pos"))
+                identifier = new_pokemon.get_identifier()
+                if self.parsed_pokemons.get(identifier, None) is not None:
+                    updated_pokemons[identifier] = self.parsed_pokemons.get(identifier)
+                else:
+                    updated_pokemons[identifier] = new_pokemon
+
+            self.parsed_pokemons = updated_pokemons
         except Exception as e:
             print(f"Couldn't parse pokemons : {e}")
 

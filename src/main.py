@@ -31,10 +31,9 @@ def main():
                 pygame.quit()
                 exit(0)
 
-
         game_ui_handler.create_proportion_mapping(graphi)
         game_ui_handler.scale_positions(graphi.get_node_map().values())
-        game_ui_handler.scale_positions(game_handler.parsed_pokemons)
+        game_ui_handler.scale_positions(game_handler.parsed_pokemons.values())
         game_ui_handler.scale_positions(game_handler.agents.values())
 
         for curr_edge in graphi.get_parsed_edges():
@@ -45,15 +44,16 @@ def main():
         for node in graphi.get_node_map().values():
             game_ui_handler.draw_circles(node.get_pos(), node.get_key())
 
-        for obj_to_draw in list(game_handler.agents.values()) + game_handler.parsed_pokemons:
+        for obj_to_draw in list(game_handler.agents.values()) + list(game_handler.parsed_pokemons.values()):
             game_ui_handler.draw(obj_to_draw)
 
-        for poke in game_handler.parsed_pokemons:
+        for poke in game_handler.parsed_pokemons.values():
             game_handler.calculate_fastest_path(poke)
 
         game_handler.choose_next_edge()
 
         game_handler.update_agents()
+        game_handler.update_pokemons()
         display.update()
         game_ui_handler.clock.tick(60)
 
