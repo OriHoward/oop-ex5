@@ -1,5 +1,4 @@
 from Position import Position
-import pygame
 
 
 class Agent:
@@ -38,7 +37,7 @@ class Agent:
         return self._pos
 
     def set_refresh_interval(self, dist):
-        self.refresh_interval = (dist / self.speed) / 5
+        self.refresh_interval = (dist / self.speed)
 
     def __repr__(self):
         return f"Agent: {self._id}, {self.value}, {self._pos}, {self.src}"
