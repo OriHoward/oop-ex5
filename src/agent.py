@@ -25,7 +25,6 @@ class Agent:
         self.dest = dest
         self.speed = speed
         self._pos = Position(*(pos.split(",")))
-        print(f"agent updated {self._id}")
 
     def calculate_load_factor(self, dist: float):
         return self.load_factor + (dist / self.speed)
@@ -35,3 +34,6 @@ class Agent:
 
     def get_pos(self):
         return self._pos
+
+    def __repr__(self):
+        return f"Agent: {self._id}, {self.value}, {self._pos}, {self.src}"

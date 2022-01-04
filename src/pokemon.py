@@ -45,3 +45,6 @@ class Pokemon:
         d2 = dest.get_pos().distance(self._pos)
         d3 = src.get_pos().distance(dest.get_pos())
         return True if fabs(d1 + d2 - d3) <= float_info.epsilon else False
+
+    def __repr__(self):
+        return f"Pokemon: {self._value}, {self._pos}, {self._type}"
