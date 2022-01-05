@@ -22,55 +22,50 @@ def main():
     client_os = game_handler.get_client()
     game_ui_handler.pygame_setup()
 
-    while game_handler.is_running() == 'true':
-        game_ui_handler.reset_color()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit(0)
+    try:
+        while game_handler.is_running() == 'true':
+            game_ui_handler.reset_color()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit(0)
 
-        game_handler.update_agents()
-        game_ui_handler.create_proportion_mapping(graphi)
-        game_ui_handler.scale_positions(graphi.get_node_map().values())
-        game_ui_handler.scale_positions(game_handler.parsed_pokemons.values())
-        game_ui_handler.scale_positions(game_handler.agents.values())
+            game_handler.update_agents()
+            game_ui_handler.create_proportion_mapping(graphi)
+            game_ui_handler.scale_positions(graphi.get_node_map().values())
+            game_ui_handler.scale_positions(game_handler.parsed_pokemons.values())
+            game_ui_handler.scale_positions(game_handler.agents.values())
 
-        for curr_edge in graphi.get_parsed_edges():
-            src = graphi.get_node(curr_edge.get_src())
-            dest = graphi.get_node(curr_edge.get_dest())
-            game_ui_handler.draw_lines(src, dest)
+            for curr_edge in graphi.get_parsed_edges():
+                src = graphi.get_node(curr_edge.get_src())
+                dest = graphi.get_node(curr_edge.get_dest())
+                game_ui_handler.draw_lines(src, dest)
 
-        for node in graphi.get_node_map().values():
-            game_ui_handler.draw_circles(node.get_pos(), node.get_key())
+            for node in graphi.get_node_map().values():
+                game_ui_handler.draw_circles(node.get_pos(), node.get_key())
 
-        for poke_to_draw in game_handler.parsed_pokemons.values():
-            game_ui_handler.draw(poke_to_draw)
+            for poke_to_draw in game_handler.parsed_pokemons.values():
+                game_ui_handler.draw(poke_to_draw)
 
-        for agent_to_draw in game_handler.agents.values():
-            if agent_to_draw.curr_interval < agent_to_draw.refresh_interval:
-                agent_to_draw.curr_interval += agent_to_draw.refresh_interval / 10
-            else:
-                client_os.move()
-                agent_to_draw.curr_interval = 0
-            game_ui_handler.draw(agent_to_draw)
+            for agent_to_draw in game_handler.agents.values():
+                if agent_to_draw.curr_interval < agent_to_draw.refresh_interval:
+                    agent_to_draw.curr_interval += agent_to_draw.refresh_interval / 10
+                else:
+                    client_os.move()
+                    agent_to_draw.curr_interval = 0
+                game_ui_handler.draw(agent_to_draw)
 
-        game_handler.update_agents()
-        game_ui_handler.scale_positions(game_handler.agents.values())
-        game_handler.update_pokemons()
-        # lst = [p.get_pos() for p in game_handler.parsed_pokemons.values()]
-        # print(lst)
-        game_handler.find_path()
-        game_handler.choose_next_edge()
+            game_handler.update_agents()
+            game_ui_handler.scale_positions(game_handler.agents.values())
+            game_handler.update_pokemons()
+            game_ui_handler.show_game_info(client_os.get_info())
+            game_handler.find_path()
+            game_handler.choose_next_edge()
 
-        # time.sleep(0.2)
-        # game_handler.client.move()
-
-        # print(game_handler.client.get_info())
-        # print(game_handler.agents_map)
-
-        display.update()
-        # print(client_os.get_info())
-        game_ui_handler.clock.tick(60)
+            display.update()
+            game_ui_handler.clock.tick(60)
+    except:
+        print("Game has ended")
 
 
 if __name__ == '__main__':

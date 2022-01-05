@@ -1,5 +1,6 @@
 import pygame
 from pygame import Color, font, time, gfxdraw
+import json
 
 from DiGraph import DiGraph
 
@@ -16,7 +17,7 @@ class GameUI:
     def __init__(self, screen, screen_color=COLOR, f=FONT, caption: str = CAPTION, icon=ICON):
         self.screen = screen
         self.screen_color = screen_color
-        self.f = f
+        self.game_font = f
         self.caption = caption
         self.icon = icon
         self.clock = time.Clock()
@@ -31,7 +32,7 @@ class GameUI:
     def draw_circles(self, pos, key=None, c_color=Color(128, 216, 255), t_color=Color(222, 22, 22)):
         gfxdraw.filled_circle(self.screen, int(pos.get_scaled_x()), int(pos.get_scaled_y()), 15, c_color)
         if key is not None:
-            id_surface = self.f.render(str(key), True, t_color)
+            id_surface = self.game_font.render(str(key), True, t_color)
             id_rect = id_surface.get_rect(center=(pos.get_scaled_x(), pos.get_scaled_y()))
             self.screen.blit(id_surface, id_rect)
 
@@ -67,3 +68,14 @@ class GameUI:
 
     def reset_color(self):
         self.screen.fill(self.screen_color)
+
+    def show_game_info(self, game_info):
+        info_as_dict = json.loads(game_info)
+        info_as_dict = info_as_dict.get("GameServer")
+        text_to_display = f"moves: {info_as_dict.get('moves')}," \
+                          f" grade: {info_as_dict.get('grade')}," \
+                          f" game_level: {info_as_dict.get('game_level')}"
+        id_surface = self.game_font.render(text_to_display, True, Color(222, 22, 22))
+        id_rect = id_surface.get_rect(
+            center=(self.screen.get_width() - (id_surface.get_width()), self.screen.get_height() - 10))
+        self.screen.blit(id_surface, id_rect)
