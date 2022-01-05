@@ -1,6 +1,7 @@
-import pygame
-from pygame import Color, font, time, gfxdraw
 import json
+
+import pygame
+from pygame import Color, font, time, gfxdraw, Surface
 
 from DiGraph import DiGraph
 
@@ -14,7 +15,7 @@ ICON = r'../misc/icon.png'
 
 class GameUI:
 
-    def __init__(self, screen, screen_color=COLOR, f=FONT, caption: str = CAPTION, icon=ICON):
+    def __init__(self, screen: Surface, screen_color=COLOR, f=FONT, caption: str = CAPTION, icon=ICON):
         self.screen = screen
         self.screen_color = screen_color
         self.game_font = f
@@ -64,7 +65,7 @@ class GameUI:
 
     def scale_positions(self, objects_to_scale):
         for node in objects_to_scale:
-            node.get_pos().scale(self.proportions)
+            node.get_pos().scale(self.proportions, self.screen.get_width(), self.screen.get_height())
 
     def reset_color(self):
         self.screen.fill(self.screen_color)

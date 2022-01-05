@@ -2,7 +2,7 @@ import os
 
 import pygame
 from dotenv import load_dotenv
-from pygame import display
+from pygame import display, constants
 
 from GameHandler import GameHandler
 from GameUI import GameUI
@@ -11,7 +11,7 @@ load_dotenv()
 
 
 def main():
-    screen = display.set_mode((int(os.getenv("WIDTH")), int(os.getenv("HEIGHT"))))
+    screen = display.set_mode((int(os.getenv("WIDTH")), int(os.getenv("HEIGHT"))), flags=constants.RESIZABLE)
     game_handler = GameHandler()
     game_handler.init_connection()
     game_handler.parse_game_info()

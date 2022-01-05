@@ -1,4 +1,3 @@
-import os
 import random
 
 from math import dist
@@ -47,15 +46,14 @@ class Position:
     def __repr__(self):
         return f"x={self._x}, y={self._y}, z={self._z}"
 
-    def scale(self, proportions: dict):
-        screen_width = int(os.getenv("WIDTH")) - 50
-        screen_height = int(os.getenv("HEIGHT")) - 50
+    def scale(self, proportions: dict, width, height):
         min_screen = 50
+        screen_width = width - min_screen
+        screen_height = height - min_screen
         x_proportions = proportions.get("x_proportions")
         y_proportions = proportions.get("y_proportions")
         min_x, max_x = x_proportions
         min_y, max_y = y_proportions
-
         self.scaled_x = ((self._x - min_x) / (max_x - min_x)) * (screen_width - min_screen) + min_screen
         self.scaled_y = ((self._y - min_y) / (max_y - min_y)) * (screen_height - min_screen) + min_screen
 
