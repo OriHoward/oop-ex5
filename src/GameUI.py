@@ -60,8 +60,8 @@ class GameUI:
         self.screen.blit(scaled_image, rect)
 
     def scale_positions(self, objects_to_scale):
-        for node in objects_to_scale:
-            node.get_pos().scale(self.proportions, self.screen.get_width(), self.screen.get_height())
+        for scalable_obj in objects_to_scale:
+            scalable_obj.get_pos().scale(self.proportions, self.screen.get_width(), self.screen.get_height())
 
     def reset_color(self):
         self.screen.fill(self.screen_color)
