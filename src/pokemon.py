@@ -1,5 +1,4 @@
 from math import fabs
-from sys import float_info
 
 from GraphEdge import GraphEdge
 from GraphNode import GraphNode
@@ -13,10 +12,10 @@ class Pokemon:
         self._value: float = value
         self._type: int = _type
         self._pos: Position = Position(*(pos.split(',')))
-        self.is_active = True
-        self.is_assigned = False
-        self.edge = None
-        self.icon_path = "../misc/mew.png" if _type > 0 else "../misc/bullbasaur.png"
+        self.is_active: bool = True
+        self.is_assigned: bool = False
+        self.edge: GraphEdge = None
+        self.icon_path: str = "../misc/mew.png" if _type > 0 else "../misc/bullbasaur.png"
 
     def get_value(self):
         return self._value
@@ -29,10 +28,10 @@ class Pokemon:
             raise Exception
         return self._pos
 
-    def set_activity(self, new_status):
+    def set_activity(self, new_status) -> bool:
         self.is_active = new_status
 
-    def set_assigned(self, new_status):
+    def set_assigned(self, new_status) -> bool:
         self.is_assigned = new_status
 
     def set_edge(self, edge: GraphEdge):
@@ -41,7 +40,7 @@ class Pokemon:
     def get_edge(self) -> GraphEdge:
         return self.edge
 
-    def get_identifier(self):
+    def get_identifier(self) -> tuple[float, float, int]:
         return self._pos.get_x(), self._pos.get_y(), self.get_type()
 
     def is_between(self, src: GraphNode, dest: GraphNode) -> bool:
