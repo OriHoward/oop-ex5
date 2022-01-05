@@ -1,21 +1,16 @@
 import json
 
-import pygame
-from pygame import Color, font, time, gfxdraw, Surface
+from pygame import time, gfxdraw, Surface
 
+from ButtonUI import Button
+from ConstansUI import *
 from DiGraph import DiGraph
-
-pygame.font.init()
-
-COLOR = Color(30, 30, 30)
-FONT = font.SysFont("Arial", 20, bold=True)
-CAPTION = "Happy This Is the Last Assignment"
-ICON = r'../misc/icon.png'
 
 
 class GameUI:
 
-    def __init__(self, screen: Surface, screen_color=COLOR, f=FONT, caption: str = CAPTION, icon=ICON):
+    def __init__(self, screen: Surface, screen_color=BACKGROUND_COLOR, f=GAME_FONT, caption: str = SCREEN_CAPTION,
+                 icon=SCREEN_ICON):
         self.screen = screen
         self.screen_color = screen_color
         self.game_font = f
@@ -24,20 +19,21 @@ class GameUI:
         self.clock = time.Clock()
         self.pygame_setup()
         self.proportions: dict = {}
+        self.game_buttons: list[Button] = []
 
     def pygame_setup(self):
         icon = pygame.image.load(self.icon)
         pygame.display.set_icon(icon)
         pygame.display.set_caption(self.caption)
 
-    def draw_circles(self, pos, key=None, c_color=Color(128, 216, 255), t_color=Color(222, 22, 22)):
+    def draw_circles(self, pos, key=None, c_color=CIRCLE_COLOR, t_color=TEXT_COLOR):
         gfxdraw.filled_circle(self.screen, int(pos.get_scaled_x()), int(pos.get_scaled_y()), 15, c_color)
         if key is not None:
             id_surface = self.game_font.render(str(key), True, t_color)
             id_rect = id_surface.get_rect(center=(pos.get_scaled_x(), pos.get_scaled_y()))
             self.screen.blit(id_surface, id_rect)
 
-    def draw_lines(self, src, dest, l_color=Color(255, 255, 255)):
+    def draw_lines(self, src, dest, l_color=LINE_COLOR):
         src_x, src_y = src.get_pos().get_scaled_x(), src.get_pos().get_scaled_y()
         dest_x, dest_y = dest.get_pos().get_scaled_x(), dest.get_pos().get_scaled_y()
         pygame.draw.line(self.screen, l_color, (src_x, src_y), (dest_x, dest_y), width=2)
@@ -76,7 +72,18 @@ class GameUI:
         text_to_display = f"moves: {info_as_dict.get('moves')}," \
                           f" grade: {info_as_dict.get('grade')}," \
                           f" game_level: {info_as_dict.get('game_level')}, time_to_end:{time_to_end}"
-        id_surface = self.game_font.render(text_to_display, True, Color(222, 22, 22))
+        id_surface = self.game_font.render(text_to_display, True, TEXT_COLOR)
         id_rect = id_surface.get_rect(
             center=(self.screen.get_width() - (id_surface.get_width()), self.screen.get_height() - 10))
         self.screen.blit(id_surface, id_rect)
+
+    def add_button(self, button: Button):
+        self.game_buttons.append(button)
+
+    def display_buttons(self):
+        for b in self.game_buttons:
+            b.render(self.screen)
+
+    def check_buttons_pressed(self):
+        for b in self.game_buttons:
+            b.is_pressed()

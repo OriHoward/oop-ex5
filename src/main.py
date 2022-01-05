@@ -2,10 +2,11 @@ import os
 
 import pygame
 from dotenv import load_dotenv
-from pygame import display, constants
+from pygame import display, constants, MOUSEBUTTONDOWN
 
 from GameHandler import GameHandler
 from GameUI import GameUI
+from ButtonUI import Button
 
 load_dotenv()
 
@@ -21,7 +22,12 @@ def main():
     game_handler.start_game()
     client_os = game_handler.get_client()
     game_ui_handler.pygame_setup()
+
     game_info = ""
+
+    b = Button("Stop Game", game_ui_handler.game_font, (100, 30), (0, 0))
+    b.add_listener(game_handler.get_client().stop)
+    game_ui_handler.add_button(b)
 
     try:
         while game_handler.is_running() == 'true':
@@ -30,6 +36,8 @@ def main():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit(0)
+                if event.type == MOUSEBUTTONDOWN:
+                    game_ui_handler.check_buttons_pressed()
 
             game_handler.update_agents()
             game_ui_handler.create_proportion_mapping(graphi)
@@ -56,6 +64,7 @@ def main():
                     agent_to_draw.curr_interval = 0
                 game_ui_handler.draw(agent_to_draw)
 
+            game_ui_handler.display_buttons()
             game_handler.update_agents()
             game_ui_handler.scale_positions(game_handler.agents.values())
             game_handler.update_pokemons()
