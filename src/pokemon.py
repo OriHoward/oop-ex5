@@ -4,6 +4,7 @@ from sys import float_info
 from GraphEdge import GraphEdge
 from GraphNode import GraphNode
 from Position import Position
+import math
 
 
 class Pokemon:
@@ -52,7 +53,7 @@ class Pokemon:
         d1 = src.get_pos().distance(self._pos)
         d2 = dest.get_pos().distance(self._pos)
         d3 = src.get_pos().distance(dest.get_pos())
-        return True if fabs(d1 + d2 - d3) <= float_info.epsilon else False
+        return True if fabs(d1 + d2 - d3) <= math.pow(10, -5) else False
 
     def __repr__(self):
         return f"Pokemon: {self._value}, {self._pos}, {self._type}"
