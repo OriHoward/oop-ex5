@@ -122,9 +122,10 @@ class GameHandler:
                         min_dist = dist
                         min_path = path
                         chosen_poke = poke
-            if chosen_poke is not None:
+            if chosen_poke is not None and len(self.agents_map[agent]) == 0:
+                if poke.get_type() == -1:
+                    min_path.append(poke.get_edge().get_src())
                 self.agents_map[agent] = min_path
-                print(min_path)
                 chosen_poke.set_assigned(True)
 
     def set_pokemon_edge(self, pokemon):

@@ -1,0 +1,36 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class DiGraph {
+
+}
+
+class GraphAlgo {
+
+}
+
+class GraphEdge {
+
+}
+
+class GraphNode {
+
+}
+
+class Position {
+  get_x(self)
+  get_y(self)
+  get_z(self):
+
+}
+
+class Pokemon {
+}
+
+class GameHandler{
+}
+
+class GameUI{
+}
+
+@enduml
