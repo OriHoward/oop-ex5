@@ -66,6 +66,20 @@ class GameHandler {
   choose_next_edge(self)
 }
 
+class GameUI {
+  pygame_setup(self)
+  draw_circles(self, pos, key=None, c_color=Color(128, 216, 255), t_color=Color(222, 22, 22))
+  draw_lines(self, src, dest, l_color=Color(255, 255, 255))
+  create_proportion_mapping(self, graph: DiGraph)
+  draw(self, obj_to_draw)
+  scale_positions(self, objects_to_scale)
+  reset_color(self)
+  show_game_info(self, game_info)
+}
+
+class main {
+  main()
+}
 class Position {
   get_x(self)
   get_y(self)
@@ -101,7 +115,7 @@ DiGraph <|-- GraphEdge
 DiGraph <|-- GraphNode
 GameHandler <|-- Pokemon
 GameHandler <|-- Agent
-
+GameUI --|> main
 
 
 @enduml
