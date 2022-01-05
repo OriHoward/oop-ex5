@@ -35,8 +35,8 @@ class TestGameHandler(TestCase):
         self.game_handler.create_agents(2)
         agent_list = list(self.game_handler.agents.values())
         first_agent, second_agent = agent_list
-        self.assertEqual(9,first_agent.placement)
-        self.assertEqual(10,second_agent.placement)
+        self.assertEqual(9, first_agent.placement)
+        self.assertEqual(10, second_agent.placement)
 
     def test_parse_game_info(self):
         self.game_handler.parse_game_info()
@@ -82,9 +82,6 @@ class TestGameHandler(TestCase):
         first_agent_path, second_agent_path = self.game_handler.agents_map.values()
         self.assertEqual(actual_fastest_path, first_agent_path)
         self.assertEqual([], second_agent_path)
-
-    def test_get_edge_path(self):
-        self.fail()
 
     def test_choose_next_edge(self):
         self.fail()
