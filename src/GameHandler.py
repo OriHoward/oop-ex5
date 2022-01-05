@@ -109,7 +109,8 @@ class GameHandler:
                     dist+=p.get_edge.w
         """
         for agent in self.agents.values():
-            min_dist = float('inf')
+            min_load_factor = float('inf')
+            dist_to_update = None
             min_path = None
             chosen_poke = None
             for poke in self.parsed_pokemons.values():
@@ -120,13 +121,16 @@ class GameHandler:
                         dist, path = self.graph_algo.shortest_path(agent.src, poke.get_edge().get_src())
                         path.append(poke.get_edge().get_dest())
                         dist += poke.get_edge().get_weight()
-                    if dist < min_dist and len(path) > 0:
-                        min_dist = dist
+                    load_factor = agent.calculate_load_factor(dist)
+                    if load_factor < min_load_factor and len(path) > 0:
+                        min_load_factor = load_factor
                         min_path = path
                         chosen_poke = poke
+                        dist_to_update = dist
             if chosen_poke is not None and len(self.agents_map[agent]) == 0:
                 self.agents_map[agent] = min_path
                 chosen_poke.set_assigned(True)
+                agent.update_load_factor(dist_to_update)
                 agent.set_curr_pokemon(chosen_poke)
 
     def set_pokemon_edge(self, pokemon):
