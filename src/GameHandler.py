@@ -5,6 +5,7 @@ from client import Client
 import os
 import json
 from pokemon import Pokemon
+import math
 
 
 class GameHandler:
@@ -124,10 +125,9 @@ class GameHandler:
                         min_path = path
                         chosen_poke = poke
             if chosen_poke is not None and len(self.agents_map[agent]) == 0:
-                print(agent.src, agent.dest)
                 self.agents_map[agent] = min_path
-                print(min_path)
                 chosen_poke.set_assigned(True)
+                agent.set_curr_pokemon(chosen_poke)
 
     def set_pokemon_edge(self, pokemon):
         for edge in self.get_graph().get_parsed_edges():
@@ -149,7 +149,9 @@ class GameHandler:
             if agent.dest == -1 and len(path) > 0:
                 new_dest = path.pop(0)
                 dist, _ = self.graph_algo.shortest_path(agent.src, new_dest)
-                agent.set_refresh_interval(dist)
+                if bool(path):
+                    agent.set_refresh_interval(dist)
+
                 payload = {"agent_id": agent._id, "next_node_id": new_dest}
                 payload_list.append(payload)
         if bool(payload_list):

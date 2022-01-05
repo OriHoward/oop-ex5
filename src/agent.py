@@ -1,4 +1,5 @@
 from Position import Position
+from pokemon import Pokemon
 
 
 class Agent:
@@ -19,6 +20,7 @@ class Agent:
         self.icon_path = "../misc/pokeball.png"
         self.refresh_interval = 0
         self.curr_interval = 0
+        self.curr_pokemon: Pokemon = None
 
     def update_agent(self, value, src, dest, speed, pos):
         self.value = value
@@ -38,6 +40,17 @@ class Agent:
 
     def set_refresh_interval(self, dist):
         self.refresh_interval = (dist / self.speed)
+
+    def set_curr_pokemon(self, pokemon: Pokemon):
+        self.curr_pokemon = pokemon
+
+    def get_pokemon(self):
+        return self.curr_pokemon
+
+    def dist_from_poke(self):
+        if self.curr_pokemon is not None:
+            return self._pos.distance(self.curr_pokemon.get_pos())
+        return float("inf")
 
     def __repr__(self):
         return f"Agent: {self._id}, {self.value}, {self._pos}, {self.src}"
