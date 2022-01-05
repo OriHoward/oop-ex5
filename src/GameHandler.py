@@ -38,10 +38,16 @@ class GameHandler:
     def create_agents(self, num_of_agents):
         payload = {}
         print(f"Initializing {num_of_agents} agents")
+        # keep popping if there are pokemon left in the pokemon list otherwise just put the agent in the node == id
+        sorted_pokes = sorted(self.parsed_pokemons.values(), key=lambda x: x.get_value(), reverse=True)
         for num in range(num_of_agents):
-            # the id in the payload is the id of the start node of the pokemon
-            payload["id"] = num
             new_agent = Agent(num)
+            if bool(sorted_pokes):
+                payload["id"] = sorted_pokes.pop(0).get_edge().get_src()
+
+            else:
+                payload["id"] = num
+            new_agent.set_placement(payload.get("id"))
             self.agents[num] = new_agent
             self.agents_map[new_agent] = []
             self.client.add_agent(json.dumps(payload))
@@ -54,8 +60,8 @@ class GameHandler:
             if game_info is None:
                 raise ValueError("Bad JSON")
             self.graph_algo.load_from_json(os.path.join("../", game_info.get("graph")))
-            self.create_agents(game_info.get("agents", 0))
             self.update_pokemons()
+            self.create_agents(game_info.get("agents", 0))
         except Exception as e:
             print(f"Couldn't parse game info : {e}")
 

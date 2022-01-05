@@ -31,7 +31,12 @@ class TestGameHandler(TestCase):
         self.fail()
 
     def test_create_agents(self):
-        self.fail()
+        self.game_handler.parse_game_info()
+        self.game_handler.create_agents(2)
+        agent_list = list(self.game_handler.agents.values())
+        first_agent, second_agent = agent_list
+        self.assertEqual(9,first_agent.placement)
+        self.assertEqual(10,second_agent.placement)
 
     def test_parse_game_info(self):
         self.game_handler.parse_game_info()

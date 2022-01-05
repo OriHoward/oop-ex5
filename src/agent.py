@@ -21,6 +21,7 @@ class Agent:
         self.refresh_interval = 0
         self.curr_interval = 0
         self.curr_pokemon: Pokemon = None
+        self.placement = 0
 
     def update_agent(self, value, src, dest, speed, pos):
         self.value = value
@@ -51,6 +52,9 @@ class Agent:
         if self.curr_pokemon is not None:
             return self._pos.distance(self.curr_pokemon.get_pos())
         return float("inf")
+
+    def set_placement(self, initial_spot):
+        self.placement = initial_spot
 
     def __repr__(self):
         return f"Agent: {self._id}, {self.value}, {self._pos}, {self.src}"
