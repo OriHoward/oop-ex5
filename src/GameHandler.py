@@ -112,10 +112,11 @@ class GameHandler:
             min_path = None
             chosen_poke = None
             for poke in self.parsed_pokemons.values():
-                if not poke.is_assigned:
-                    dist, path = self.graph_algo.shortest_path(agent.src, poke.get_edge().get_src())
-                    print(agent.src, agent.dest)
-                    if poke.get_edge().get_dest() not in path:
+                if not poke.is_assigned and len(self.agents_map[agent]) == 0 and agent.dest == -1:
+                    if agent.src == poke.get_edge().get_src():
+                        dist, path = self.graph_algo.shortest_path(agent.src, poke.get_edge().get_dest())
+                    else:
+                        dist, path = self.graph_algo.shortest_path(agent.src, poke.get_edge().get_src())
                         path.append(poke.get_edge().get_dest())
                         dist += poke.get_edge().get_weight()
                     if dist < min_dist and len(path) > 0:
@@ -123,9 +124,9 @@ class GameHandler:
                         min_path = path
                         chosen_poke = poke
             if chosen_poke is not None and len(self.agents_map[agent]) == 0:
-                if chosen_poke.get_type() == -1:
-                    min_path.append(chosen_poke.get_edge().get_src())
+                print(agent.src, agent.dest)
                 self.agents_map[agent] = min_path
+                print(min_path)
                 chosen_poke.set_assigned(True)
 
     def set_pokemon_edge(self, pokemon):
@@ -135,10 +136,10 @@ class GameHandler:
                 # print(pokemon)
                 min_id, max_id = min(edge.get_src(), edge.get_dest()), max(edge.get_src(), edge.get_dest())
                 if pokemon.get_type() == -1:
-                    chosen_edge = self.get_graph().get_edge(min_id, max_id)
+                    chosen_edge = self.get_graph().get_edge(max_id, min_id)
                     pokemon.set_edge(chosen_edge)
                 else:
-                    chosen_edge = self.get_graph().get_edge(max_id, min_id)
+                    chosen_edge = self.get_graph().get_edge(min_id, max_id)
                     pokemon.set_edge(chosen_edge)
                 break
 

@@ -1,36 +1,107 @@
 @startuml
 'https://plantuml.com/class-diagram
 
-class DiGraph {
-
+class GraphAlgo {
+ load_nodes(self, nodes) -> bool
+ load_edges(self, edges) -> bool
+ load_from_json(self, file_name: str) -> bool
+ shortest_path(self, id1: int, id2: int) -> (float, list)
+ remove_visited_cities(cities: set[int], curr_path: tuple[int])
+ get_optimal_path_to_cities(self, cities: set[int])
+ get_optimal_path_from_map(cities: set[int], path_map: dict[tuple[int], float]) -> (tuple[int], float)
+ get_optimal_path(self, node_id: int, cities: set[int], is_start: bool) -> (tuple[int], float)
+ dijkstra(self, src: int) -> dict[int, list[int]]
+ dijkstra_minimize(self, src: int)
+ find_max(self) -> int
 }
 
-class GraphAlgo {
-
+class DiGraph  {
+  get_parsed_edges(self) -> list[GraphEdge]
+  get_node_map(self) -> dict[int, GraphNode]
+  get_node(self, key: int) -> GraphNode
+  get_edge(self, src: int, dest: int)
+  add_edge(self, id1: int, id2: int, weight: float) -> bool
+  add_node(self, node_id: int, pos: tuple = None) -> bool
+  initiate_edge_maps(self)
 }
 
 class GraphEdge {
-
+  get_src(self)
+  get_dest(self)
+  get_weight(self)
+  set_dest(self, dest: int)
+  set_src(self, src: int)
+  to_json_dict(self)
 }
 
 class GraphNode {
+  get_srcMap(self)
+  get_destMap(self)
+  set_srcMap(self, src_map: dict)
+  set_destMap(self, dest_map: dict)
+  get_dist(self)
+  set_dist(self, dist: float)
+  get_key(self)
+  add_dest(self, edge: GraphEdge)
+  add_src(self, edge: GraphEdge)
+  remove_dest(self, dest: int) -> GraphEdge
+  remove_src(self, src: int) -> GraphEdge
+  to_json_dict(self)
+  get_pos(self) -> Position
+  set_tag(self, tag: NodeTag)
+  get_tag(self)
+}
 
+class GameHandler {
+  update_agents(self)
+  create_agents(self, num_of_agents)
+  parse_game_info(self)
+  update_pokemons(self)
+  init_connection(self)
+  get_client(self)
+  start_game(self)
+  get_graph(self)
+  is_running(self)
+  get_edge_path(self, pokemon) -> (GraphEdge, int, int)
+  choose_next_edge(self)
 }
 
 class Position {
   get_x(self)
   get_y(self)
-  get_z(self):
-
+  get_z(self)
+  get_json_format_str(self)
+  get_scaled_x(self)
+  get_scaled_y(self)
+  get_as_tuple(self)
+  scale(self, proportions: dict)
+  distance(self, p) -> float
 }
 
 class Pokemon {
+  get_value(self)
+  get_type(self)
+  get_pos(self)
+  set_activity(self, new_status)
+  set_assigned(self, new_status)
+  get_identifier(self)
+  is_between(self, src: GraphNode, dest: GraphNode) -> bool
 }
 
-class GameHandler{
+class Agent {
+  update_agent(self, value, src, dest, speed, pos)
+  calculate_load_factor(self, dist: float)
+  update_load_factor(self, dist: float)
+  get_pos(self)
 }
 
-class GameUI{
-}
+Position o-- GraphNode
+DiGraph o-- GraphAlgo
+DiGraph <|-- GraphEdge
+DiGraph <|-- GraphNode
+GameHandler <|-- Pokemon
+GameHandler <|-- Agent
+
+
 
 @enduml
