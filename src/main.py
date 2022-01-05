@@ -59,7 +59,7 @@ def main():
             game_handler.update_agents()
             game_ui_handler.scale_positions(game_handler.agents.values())
             game_handler.update_pokemons()
-            game_info = game_ui_handler.show_game_info(client_os.get_info())
+            game_info = game_ui_handler.show_game_info(client_os.get_info(), client_os.time_to_end())
             game_handler.find_path()
             game_handler.choose_next_edge()
 

@@ -70,12 +70,12 @@ class GameUI:
     def reset_color(self):
         self.screen.fill(self.screen_color)
 
-    def show_game_info(self, game_info):
+    def show_game_info(self, game_info, time_to_end):
         info_as_dict = json.loads(game_info)
         info_as_dict = info_as_dict.get("GameServer")
         text_to_display = f"moves: {info_as_dict.get('moves')}," \
                           f" grade: {info_as_dict.get('grade')}," \
-                          f" game_level: {info_as_dict.get('game_level')}"
+                          f" game_level: {info_as_dict.get('game_level')}, time_to_end:{time_to_end}"
         id_surface = self.game_font.render(text_to_display, True, Color(222, 22, 22))
         id_rect = id_surface.get_rect(
             center=(self.screen.get_width() - (id_surface.get_width()), self.screen.get_height() - 10))
