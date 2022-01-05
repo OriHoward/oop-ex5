@@ -79,3 +79,4 @@ class GameUI:
         id_rect = id_surface.get_rect(
             center=(self.screen.get_width() - (id_surface.get_width()), self.screen.get_height() - 10))
         self.screen.blit(id_surface, id_rect)
+        return text_to_display
