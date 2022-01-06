@@ -1,8 +1,9 @@
 # oop-ex5
 
-## how to we run the code ?
+## How to Run the Code:
 
-The command below executes the simulation, `stage number` should be replaces with a number between 0 and 15
+The command below executes the simulator.
+`stage number` should be replaced with a number between 0 and 15.
 
 ```shell
 pip install -r requirements.txt
@@ -14,70 +15,73 @@ python src/main.py
 
 Eitan Kats, Adi Yafe, Ori Howard
 
-## Game details
+## Game Details
 
-in this assigment we were asked to create a Pokémon game, the game is displayed on a directed graph and has 16 levels (
-0- 15).   
-each level has a different number of agents and Pokémons.
+In this assigment we were asked to create a Pokémon game. The game is displayed on a directed graph and has 16 levels (
+0-15).   
+Each level has a different number of agents and Pokémons.
 
-The algorithms that were used in this are:
+The Algorithms We Used:
 
 [dijkstra](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
 
-### Each Pokémon has
+### Each Pokémon has:
 
 value - the value of the Pokémon  
-type - the type of the Pokémon indicates the direction of the edge the pokemon is 'sitting' on  
+type - the type of the Pokémon indicates the direction of the edge the Pokemon is 'sitting' on  
 position - the position of the Pokémon on the graph
 
-### Each agent has
+### Each agent has:
 
 id - the id of the agent  
-value - the score of the agent (getting higher each Pokémon he catches)  
-src - the source of the agent dest - the destination of the agent. if there is no dest then -1   
-speed - the speed of the agent  
-position - representing the position of the agent
+value - the score of the agent (increases when the agent catches a Pokémon)  
+src - the source of the agent 
+dest - the destination of the agent. If the next destination has not been assigned, it
+will be -1 speed - the speed of the agent  
+position - represents the current position of the agent
 
-### The main goal of the game
+### The Main Objectives of the Game
 
-The main goal is to navigate the agents in the directed graph in the fastest way to catch as many Pokémons as they
-can.  
-Each Pokémon has a different value and each agent that catches a Pokémon gaining that value.  
-every level contains a specific graph, number of agents and Pokémons.
+The goal is to navigate the agents in the directed graph in the fastest way to catch as many Pokémons as they can.
 
 ## Game Design
 
-The 'brain' of the game is the `GameHandler` which decorates the client module that communicates with the server.  
-The first thing we do is fetching the information about the current level from the server.
+`GameHandler` manages the game. It decorates the client module that communicates with the server.
 
-1) We parse the Pokémon
-    1) we send a request to the server to get the json that represents the Pokémon and we assign each Pokémon to the
+How we used it:
+
+0) Fetch the information of the chosen level from the server.
+1) Parse the Pokémon.
+    1) Send a request to the server to get the json that represents the Pokémon and assign each Pokémon to the
        corresponding edge.
-    2) after we find the edge we calculate the estimated location of the Pokémon on the edge (ratio)
-2) We take the amount of agents that participate in the current level, and we assign each Pokémon by its value.
+    2) Calculate the estimated location of the Pokémon on the edge (ratio).
+2) Create the amount of agents participating in the current level and assign near Pokémons with the highest values.
 
-The `GameUI` class is responsible for drawing all the objects and scaling them.
+The `GameUI` class is responsible for drawing and scaling the objects.
 
-1) We create the game proportions using the nodes of the graph.
-2) Each object that we draw is being sent to a scaling function which scales it according to the proportions.
+1) Find the minimum and maximum game proportions of the graph nodes.
+2) Using the game proportions, each object is scaled and then displayed on the screen.
 
 ### The Game Loop
 
-While the game is still running we are fetching information about the agents and Pokémon. The algorithm is trying to
-find the optimal Pokémon for each agent with respect to the agent's speed and the amount of load on that agent. We only
-assign Pokémon that are not already being chased by other agents. Each iteration of the game loop we tell the agents
-that are free and have a task to perform to add the call time for the next `move` call which means pushing a timestamp
-to the render queue, This is being calculated using the agent's speed at the current time and with respect to the
-current game time.
+While the game is running:
+Fetch information about the agents and Pokémons. The algorithm finds the optimal Pokémon for each agent with respect to
+the speed and the amount of load on that agent. We only assign Pokémons that are not already being chased by other
+agents.
 
-For Example:
+In each iteration of the game loop:
+If an agent has a task, the time to complete it is calculated and added to a queue. This is calculated according to the
+speed and the time it will take the agent to complete the task, with respect to the current game time. The render queue
+is used to call the `move` method in the server at the right time.
 
-if we are currently in T1 and it takes 2 seconds for the agent to pass the current edge according to its parameters,
-then the next render time will be T1-2.
+**Note: The time is a countdown clock of the current game level duration.**
 
-on the last "hop" that the agent performs we are pushing 2 time stamps to the render queue one is the timestamp to catch
-Pokémon and the 2nd one is to hop to the next node. the calculation of the render time for the Pokémon catch is with
-respect to the ratio of the Pokémon on the edge
+For example: If the current time is T1, and it takes 2 seconds for the agent to pass the current edge, then the next
+render time will be T1-2.
+
+When the agent reaches the last edge in the current path, 2 timestamps are inserted to the render queue. The first is
+the timestamp to catch Pokémon and the second is the time it will take to reach the destination node. The calculation of
+the render time for the Pokémon catch is with respect to the ratio of the Pokémon on the edge.
 
 ## Idea of Implementation
 
@@ -132,28 +136,28 @@ This is a class that represents the Pokémon that are spread out on the graph
 
 ### Position
 
-An object representing the location of the an object that we draw on the screen.
+Represents the location of the objects that are displayed on the screen.
 
-This class also knows how to scale the object according to given proportions
+This class contains methods that scale the object according to given proportions.
 
 ### GameHandler
 
 The `GameHandler` is an implementation of the Decorator Design pattern, we Decorate the client and use the GameHandler
 to communicate with the server.
 
-The GameHandler also has the main algorithms that are being executed in the game loop
+The main algorithms that are being executed in the game loop are in the GameHandler.
 
 ### GameUI
 
 The `GameUI` class is used to draw objects that participate in the game onto the screen.
 
-The game proportions are being calculated here using the proportions of the graph, objects that are being drawn onto the
-screen are scaled here aswell
+The game proportions are calculated in this class by using the proportions of the graph. Objects that are drawn on the
+screen are scaled here as well.
 
 ### Drawable
 
-This is an abstract class that represents a drawable object that has a positions and an icon, mainly used to draw the
-agents and Pokémon
+This is an abstract class that represents a drawable object that has a position and an icon. Mainly used to draw the
+agents and Pokémon.
 
 ## Detailed Execution Details of the Algorithms
 
