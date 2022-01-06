@@ -44,8 +44,8 @@ class TestGameHandler(TestCase):
         self.game_handler.create_agents(2)
         agent_list = list(self.game_handler.agents.values())
         first_agent, second_agent = agent_list
-        self.assertEqual(9, first_agent.placement)
-        self.assertEqual(10, second_agent.placement)
+        self.assertEqual(9, first_agent.get_placement())
+        self.assertEqual(10, second_agent.get_placement())
 
     def test_parse_game_info(self):
         self.game_handler.parse_game_info()
@@ -84,7 +84,7 @@ class TestGameHandler(TestCase):
         self.assertEqual(actual_fastest_path, first_agent_path)
         self.assertEqual([], second_agent_path)
         pokemon_list = list(self.game_handler.parsed_pokemons.values())
-        self.assertTrue(pokemon_list[0].is_assigned)
+        self.assertTrue(pokemon_list[0]._is_assigned)
         # this is freeing the second agent
         self.test_agent_data.get("Agents")[1]['dest'] = -1
         self.game_handler.find_path()

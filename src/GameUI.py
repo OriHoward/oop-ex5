@@ -3,8 +3,9 @@ import json
 from pygame import time, gfxdraw, Surface
 
 from ButtonUI import Button
-from ConstansUI import *
+from ConstantsUI import *
 from DiGraph import DiGraph
+from Drawable import Drawable
 
 
 class GameUI:
@@ -53,10 +54,10 @@ class GameUI:
         graph_proportions["y_proportions"] = (min_y, max_y)
         self.proportions = graph_proportions
 
-    def draw(self, obj_to_draw):
-        icon = pygame.image.load(obj_to_draw.icon_path)
-        scaled_image = pygame.transform.scale(icon, (35, 35))
-        rect = scaled_image.get_rect(center=(obj_to_draw._pos.get_scaled_x(), obj_to_draw._pos.get_scaled_y()))
+    def draw(self, obj_to_draw: Drawable):
+        icon = pygame.image.load(obj_to_draw.get_icon_path())
+        scaled_image = pygame.transform.scale(icon, obj_to_draw.get_icon_proportions())
+        rect = scaled_image.get_rect(center=(obj_to_draw.get_pos().get_scaled_x(), obj_to_draw.get_pos().get_scaled_y()))
         self.screen.blit(scaled_image, rect)
 
     def scale_positions(self, objects_to_scale):

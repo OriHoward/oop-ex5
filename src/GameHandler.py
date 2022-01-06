@@ -1,11 +1,11 @@
+import json
+import math
+import os
+
 from GraphAlgo import GraphAlgo
 from agent import Agent
 from client import Client
-import os
-import json
 from pokemon import Pokemon
-import math
-from decimal import Decimal, ROUND_HALF_UP
 
 
 class GameHandler:
@@ -15,24 +15,24 @@ class GameHandler:
         self.graph_algo = GraphAlgo()
         self.agents: dict[int, Agent] = {}
         self.parsed_pokemons: dict[tuple[float, float, int], Pokemon] = {}
-        self.agents_map: dict[Agent, list] = {}
 
     def update_agents(self, payload=None):
         try:
-            if float(self.get_client().time_to_end()) > 1:
-                if payload is None:
-                    agents_info_dict = json.loads(self.client.get_agents())
-                else:
-                    agents_info_dict = json.loads(payload)
-                for agent_item in agents_info_dict.get("Agents", []):
-                    agent_info = agent_item.get("Agent", None)
-                    if agent_info is None:
-                        continue
-                    curr_agent = self.agents.get(agent_info.get('id'), None)
-                    if curr_agent is None:
-                        continue
-                    del agent_info["id"]
-                    curr_agent.update_agent(**agent_info)
+            if payload is None:
+                agents_info_dict = json.loads(self.client.get_agents())
+            else:
+                agents_info_dict = json.loads(payload)
+            if type(agents_info_dict) is not dict:
+                return
+            for agent_item in agents_info_dict.get("Agents", []):
+                agent_info = agent_item.get("Agent", None)
+                if agent_info is None:
+                    continue
+                curr_agent = self.agents.get(agent_info.get('id'), None)
+                if curr_agent is None:
+                    continue
+                del agent_info["id"]
+                curr_agent.update_agent(**agent_info)
         except Exception as e:
             print(f"Bad agents Json from Server {e}")
 
@@ -50,7 +50,6 @@ class GameHandler:
                 payload["id"] = num
             new_agent.set_placement(payload.get("id"))
             self.agents[num] = new_agent
-            self.agents_map[new_agent] = []
             self.client.add_agent(json.dumps(payload))
         self.update_agents()
 
@@ -68,20 +67,21 @@ class GameHandler:
 
     def update_pokemons(self):
         try:
-            if float(self.get_client().time_to_end()) > 1:
-                updated_pokemons = {}
-                pokemon_json = json.loads(self.client.get_pokemons())
-                pokemon_json = pokemon_json.get("Pokemons", [])
-                for pok in pokemon_json:
-                    curr_poke = pok.get("Pokemon")
-                    new_pokemon = Pokemon(curr_poke.get("value"), curr_poke.get("type"), curr_poke.get("pos"))
-                    identifier = new_pokemon.get_identifier()
-                    if self.parsed_pokemons.get(identifier, None) is not None:
-                        updated_pokemons[identifier] = self.parsed_pokemons.get(identifier)
-                    else:
-                        updated_pokemons[identifier] = new_pokemon
-                        self.set_pokemon_edge(new_pokemon)
-                self.parsed_pokemons = updated_pokemons
+            updated_pokemons = {}
+            pokemon_json = json.loads(self.client.get_pokemons())
+            if type(pokemon_json) is not dict:
+                return
+            pokemon_json = pokemon_json.get("Pokemons", [])
+            for pok in pokemon_json:
+                curr_poke = pok.get("Pokemon")
+                new_pokemon = Pokemon(curr_poke.get("value"), curr_poke.get("type"), curr_poke.get("pos"))
+                identifier = new_pokemon.get_identifier()
+                if self.parsed_pokemons.get(identifier, None) is not None:
+                    updated_pokemons[identifier] = self.parsed_pokemons.get(identifier)
+                else:
+                    updated_pokemons[identifier] = new_pokemon
+                    self.set_pokemon_edge(new_pokemon)
+            self.parsed_pokemons = updated_pokemons
         except Exception as e:
             print(f"Couldn't parse pokemons: {e}")
 
@@ -104,18 +104,6 @@ class GameHandler:
         return self.client.is_running()
 
     def find_path(self):
-        """
-        for a in agents
-            min_dist = inf
-            curr_poke = None
-            for p in pokemons
-                curr_poke = p
-                if p is not assigned :(
-
-                    dist, path = shortest path: a.src -> p.get_edge.src
-                    path.append(p.get_edge.dest)
-                    dist+=p.get_edge.w
-        """
         for agent in self.agents.values():
             min_load_factor = float('inf')
             dist_to_update = None
@@ -123,11 +111,11 @@ class GameHandler:
             chosen_poke = None
             sorted_pokes = sorted(self.parsed_pokemons.values(), key=lambda x: x.get_value(), reverse=True)
             for poke in sorted_pokes:
-                if not poke.is_assigned and len(self.agents_map[agent]) == 0 and agent.dest == -1:
-                    if agent.src == poke.get_edge().get_src():
-                        dist, path = self.graph_algo.shortest_path(agent.src, poke.get_edge().get_dest())
+                if not poke.get_assigned() and len(agent.get_assigned_path()) == 0 and agent.get_dest() == -1:
+                    if agent.get_src() == poke.get_edge().get_src():
+                        dist, path = self.graph_algo.shortest_path(agent.get_src(), poke.get_edge().get_dest())
                     else:
-                        dist, path = self.graph_algo.shortest_path(agent.src, poke.get_edge().get_src())
+                        dist, path = self.graph_algo.shortest_path(agent.get_src(), poke.get_edge().get_src())
                         path.append(poke.get_edge().get_dest())
                         dist += poke.get_edge().get_weight()
                     load_factor = agent.calculate_load_factor(dist)
@@ -136,8 +124,8 @@ class GameHandler:
                         min_path = path
                         chosen_poke = poke
                         dist_to_update = dist
-            if chosen_poke is not None and len(self.agents_map[agent]) == 0:
-                self.agents_map[agent] = min_path
+            if chosen_poke is not None and len(agent.get_assigned_path()) == 0:
+                agent.set_assigned_path(min_path)
                 chosen_poke.set_assigned(True)
                 agent.update_load_factor(dist_to_update)
                 agent.set_curr_pokemon(chosen_poke)
@@ -145,8 +133,7 @@ class GameHandler:
     def set_pokemon_edge(self, pokemon):
         for edge in self.get_graph().get_parsed_edges():
             src_node, dest_node = self.get_graph().get_node(edge.get_src()), self.get_graph().get_node(edge.get_dest())
-            if not pokemon.is_assigned and pokemon.is_between(src_node, dest_node):
-                # print(pokemon)
+            if not pokemon.get_assigned() and pokemon.is_between(src_node, dest_node):
                 min_id, max_id = min(edge.get_src(), edge.get_dest()), max(edge.get_src(), edge.get_dest())
                 if pokemon.get_type() == -1:
                     chosen_edge = self.get_graph().get_edge(max_id, min_id)
@@ -158,27 +145,22 @@ class GameHandler:
                     pokemon.set_ratio(self.get_graph())
                 break
 
-    def choose_next_edge(self, move_queue: list = []):
+    def choose_next_edge(self, move_queue: list):
         payload_list = []
-        for agent, path in self.agents_map.items():
-            if agent.dest == -1 and len(path) > 0:
-                new_dest = path.pop(0)
-                dist, _ = self.graph_algo.shortest_path(agent.src, new_dest)
+        for agent in self.agents.values():
+            agent_path = agent.get_assigned_path()
+            if agent.get_dest() == -1 and len(agent_path) > 0:
+                new_dest = agent_path.pop(0)
+                dist, _ = self.graph_algo.shortest_path(agent.get_src(), new_dest)
                 current_time = float(self.client.time_to_end())
                 time_to_pass = (dist / agent.get_speed()) * 1000
-
-                next_move = Decimal((current_time - (time_to_pass))).quantize(Decimal('1e-4')) if dist != float(
-                    "inf") else 0
-                # next_move = math.floor(current_time - (time_to_pass)) if dist != float("inf") else 0
-                if agent.src != new_dest:
+                next_move = math.floor(current_time - (time_to_pass)) if dist != float("inf") else 0
+                if agent.get_src() != new_dest:
                     move_queue.append(next_move)
-                    if not bool(path):
+                    if not bool(agent_path):
                         poke = agent.get_pokemon()
-                        move_queue.append(
-                            Decimal((current_time - (time_to_pass * poke.get_ratio()))).quantize(Decimal('1e-4')))
-                        # move_queue.append(math.floor(current_time - (time_to_pass * poke.get_ratio())))
-
-                payload = {"agent_id": agent._id, "next_node_id": new_dest}
+                        move_queue.append(math.floor(current_time - (time_to_pass * poke.get_ratio())))
+                payload = {"agent_id": agent.get_id(), "next_node_id": new_dest}
                 payload_list.append(payload)
 
         if bool(payload_list):
