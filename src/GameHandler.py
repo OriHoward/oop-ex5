@@ -94,8 +94,8 @@ class GameHandler:
                     updated_pokemons[identifier] = new_pokemon
                     self.set_pokemon_edge(new_pokemon)
             self.parsed_pokemons = updated_pokemons
-        except Exception as e:
-            print(f"Couldn't parse pokemons: {e}")
+        except:
+            print(f"Couldn't parse pokemons")
 
     """
         Starts the connection
@@ -137,8 +137,7 @@ class GameHandler:
             dist_to_update = None
             min_path = None
             chosen_poke = None
-            sorted_pokes = sorted(self.parsed_pokemons.values(), key=lambda x: x.get_value(), reverse=True)
-            for poke in sorted_pokes:
+            for poke in self.parsed_pokemons.values():
                 if not poke.get_assigned() and len(agent.get_assigned_path()) == 0 and agent.get_dest() == -1:
                     if agent.get_src() == poke.get_edge().get_src():
                         dist, path = self.graph_algo.shortest_path(agent.get_src(), poke.get_edge().get_dest())
