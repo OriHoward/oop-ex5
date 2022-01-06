@@ -29,7 +29,7 @@ Each level has a different number of agents and Pokémons.
 
 The Algorithms We Used:
 
-[dijkstra](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
+[Dijkstra](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
 
 ### Each Pokémon has:
 
@@ -37,7 +37,7 @@ value - the value of the Pokémon
 type - the type of the Pokémon indicates the direction of the edge the Pokemon is 'sitting' on  
 position - the position of the Pokémon on the graph
 
-### Each agent has:
+### Each Agent has:
 
 id - the id of the agent  
 value - the score of the agent (increases when the agent catches a Pokémon)  
