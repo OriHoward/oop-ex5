@@ -48,12 +48,11 @@ class GraphNode {
   remove_src(self, src: int) -> GraphEdge
   to_json_dict(self)
   get_pos(self) -> Position
-  set_tag(self, tag: NodeTag)
-  get_tag(self)
+
 }
 
 class GameHandler {
-  update_agents(self)
+  update_agents(self, payload=None)
   create_agents(self, num_of_agents)
   parse_game_info(self)
   update_pokemons(self)
@@ -61,9 +60,12 @@ class GameHandler {
   get_client(self)
   start_game(self)
   get_graph(self)
+  get_agents(self)
+  get_parsed_pokemons(self)
   is_running(self)
-  get_edge_path(self, pokemon) -> (GraphEdge, int, int)
-  choose_next_edge(self)
+  find_path(self)
+  set_pokemon_edge(self, pokemon)
+  choose_next_edge(self, move_queue: list)
 }
 
 class GameUI {
@@ -75,6 +77,15 @@ class GameUI {
   scale_positions(self, objects_to_scale)
   reset_color(self)
   show_game_info(self, game_info)
+  add_button(self, button: Button)
+  display_buttons(self)
+  check_buttons_pressed(self)
+}
+
+class ButtonUI {
+  add_listener(self, function)
+  render(self, surface: Surface)
+  is_pressed(self)
 }
 
 class main {
@@ -98,8 +109,15 @@ class Pokemon {
   get_pos(self)
   set_activity(self, new_status)
   set_assigned(self, new_status)
+  set_edge(self, edge: GraphEdge)
+  get_edge(self) -> GraphEdge
   get_identifier(self)
   is_between(self, src: GraphNode, dest: GraphNode) -> bool
+  set_ratio(self, graph)
+  get_ratio(self)
+  get_icon_path(self)
+  get_icon_proportions(self)
+  get_assigned(self)
 }
 
 class Agent {
@@ -107,15 +125,34 @@ class Agent {
   calculate_load_factor(self, dist: float)
   update_load_factor(self, dist: float)
   get_pos(self)
+  get_icon_path(self)
+  get_icon_proportions(self)
+  set_curr_pokemon(self, pokemon: Pokemon)
+  get_pokemon(self)
+  set_placement(self, initial_spot)
+  get_speed(self)
+  get_dest(self)
+  get_src(self)
+  get_id(self)
+  get_placement(self)
+}
+
+abstract class Drawable {
+  get_icon_path(self)
+  get_icon_proportions(self)
+  get_pos(self)
 }
 
 Position o-- GraphNode
 DiGraph o-- GraphAlgo
 DiGraph <|-- GraphEdge
 DiGraph <|-- GraphNode
+GameUI o-- ButtonUI
 GameHandler <|-- Pokemon
 GameHandler <|-- Agent
-GameUI --|> main
-
-
+GameUI <|-- main
+GameUI <|-- ConstantsUI
+ButtonUI <|-- ConstantsUI
+Drawable <|-- Pokemon
+Drawable <|-- Agent
 @enduml
