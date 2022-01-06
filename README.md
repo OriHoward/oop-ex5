@@ -1,16 +1,19 @@
 # oop-ex5
+
 ![Alt Text](https://j.gifs.com/r2BZ1p.gif)
 
 ## How to Run the Code:
 
-The command below executes the simulator.
-The `stage number` should be replaced with a number between 0 and 15.
+The command below executes the simulator. The `stage number` should be replaced with a number between 0 and 15.
 
 On one shell execute:
+
 ```shell
 java -jar Ex4_Server_v0.0.jar <stage number>
 ```
+
 on the other shell:
+
 ```shell
 pip install -r requirements.txt
 cd src
@@ -33,18 +36,18 @@ The Algorithms We Used:
 
 ### Each Pokémon has:
 
-value - the value of the Pokémon  
-type - the type of the Pokémon indicates the direction of the edge the Pokemon is 'sitting' on  
-position - the position of the Pokémon on the graph
+* value - the value of the Pokémon
+* type - the type of the Pokémon indicates the direction of the edge the Pokemon is 'sitting' on
+* position - the position of the Pokémon on the graph
 
 ### Each Agent has:
 
-id - the id of the agent  
-value - the score of the agent (increases when the agent catches a Pokémon)  
-src - the source of the agent 
-dest - the destination of the agent. If the next destination has not been assigned, it
-will be -1 speed - the speed of the agent  
-position - represents the current position of the agent
+* id - the id of the agent
+* value - the score of the agent (increases when the agent catches a Pokémon)
+* src - the source of the agent
+* dest - the destination of the agent. If the next destination has not been assigned, it will be -1 speed - the speed of
+  the agent
+* position - represents the current position of the agent
 
 ### The Main Objectives of the Game
 
@@ -166,6 +169,25 @@ This is an abstract class that represents a drawable object that has a position 
 agents and Pokémon.
 
 ## Detailed Execution Details of the Algorithms
+
+| Stage Number | Grade | Moves |
+| :---: | :---: |  :---: |   
+| 0 | 100 | 49
+| 1  | 535 | 241
+| 2  | 249 | 87
+| 3  | 861 | 325
+| 4  | 333 | 115
+| 5  | 677 | 273
+| 6  | 79 | 39
+| 7  | 349 | 188
+| 8  | 130 | 71
+| 9  | 469 | 240
+| 10  | 159 | 76
+| 11  | 1656 | 600
+| 12  | 40 | 33
+| 13  | 269 | 174
+| 14  | 201 | 96
+| 15 | 392 | 223
 
 ## UML
 
