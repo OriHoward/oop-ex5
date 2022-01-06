@@ -31,3 +31,6 @@ class GraphEdge:
             "w": self._weight,
             "dest": self._dest
         }
+
+    def __repr__(self):
+        return f"{self._src} -> {self._dest}"
