@@ -1,5 +1,4 @@
 from GraphAlgo import GraphAlgo
-from GraphEdge import GraphEdge
 from agent import Agent
 from client import Client
 import os
@@ -119,7 +118,8 @@ class GameHandler:
             dist_to_update = None
             min_path = None
             chosen_poke = None
-            for poke in self.parsed_pokemons.values():
+            sorted_pokes = sorted(self.parsed_pokemons.values(), key=lambda x: x.get_value(), reverse=True)
+            for poke in sorted_pokes:
                 if not poke.is_assigned and len(self.agents_map[agent]) == 0 and agent.dest == -1:
                     if agent.src == poke.get_edge().get_src():
                         dist, path = self.graph_algo.shortest_path(agent.src, poke.get_edge().get_dest())
