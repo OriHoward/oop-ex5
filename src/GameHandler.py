@@ -5,6 +5,7 @@ import os
 import json
 from pokemon import Pokemon
 import math
+from decimal import Decimal, ROUND_HALF_UP
 
 
 class GameHandler:
@@ -18,19 +19,20 @@ class GameHandler:
 
     def update_agents(self, payload=None):
         try:
-            if payload is None:
-                agents_info_dict = json.loads(self.client.get_agents())
-            else:
-                agents_info_dict = json.loads(payload)
-            for agent_item in agents_info_dict.get("Agents", []):
-                agent_info = agent_item.get("Agent", None)
-                if agent_info is None:
-                    continue
-                curr_agent = self.agents.get(agent_info.get('id'), None)
-                if curr_agent is None:
-                    continue
-                del agent_info["id"]
-                curr_agent.update_agent(**agent_info)
+            if float(self.get_client().time_to_end()) > 1:
+                if payload is None:
+                    agents_info_dict = json.loads(self.client.get_agents())
+                else:
+                    agents_info_dict = json.loads(payload)
+                for agent_item in agents_info_dict.get("Agents", []):
+                    agent_info = agent_item.get("Agent", None)
+                    if agent_info is None:
+                        continue
+                    curr_agent = self.agents.get(agent_info.get('id'), None)
+                    if curr_agent is None:
+                        continue
+                    del agent_info["id"]
+                    curr_agent.update_agent(**agent_info)
         except Exception as e:
             print(f"Bad agents Json from Server {e}")
 
@@ -66,19 +68,20 @@ class GameHandler:
 
     def update_pokemons(self):
         try:
-            updated_pokemons = {}
-            pokemon_json = json.loads(self.client.get_pokemons())
-            pokemon_json = pokemon_json.get("Pokemons", [])
-            for pok in pokemon_json:
-                curr_poke = pok.get("Pokemon")
-                new_pokemon = Pokemon(curr_poke.get("value"), curr_poke.get("type"), curr_poke.get("pos"))
-                identifier = new_pokemon.get_identifier()
-                if self.parsed_pokemons.get(identifier, None) is not None:
-                    updated_pokemons[identifier] = self.parsed_pokemons.get(identifier)
-                else:
-                    updated_pokemons[identifier] = new_pokemon
-                    self.set_pokemon_edge(new_pokemon)
-            self.parsed_pokemons = updated_pokemons
+            if float(self.get_client().time_to_end()) > 1:
+                updated_pokemons = {}
+                pokemon_json = json.loads(self.client.get_pokemons())
+                pokemon_json = pokemon_json.get("Pokemons", [])
+                for pok in pokemon_json:
+                    curr_poke = pok.get("Pokemon")
+                    new_pokemon = Pokemon(curr_poke.get("value"), curr_poke.get("type"), curr_poke.get("pos"))
+                    identifier = new_pokemon.get_identifier()
+                    if self.parsed_pokemons.get(identifier, None) is not None:
+                        updated_pokemons[identifier] = self.parsed_pokemons.get(identifier)
+                    else:
+                        updated_pokemons[identifier] = new_pokemon
+                        self.set_pokemon_edge(new_pokemon)
+                self.parsed_pokemons = updated_pokemons
         except Exception as e:
             print(f"Couldn't parse pokemons: {e}")
 
@@ -163,12 +166,17 @@ class GameHandler:
                 dist, _ = self.graph_algo.shortest_path(agent.src, new_dest)
                 current_time = float(self.client.time_to_end())
                 time_to_pass = (dist / agent.get_speed()) * 1000
-                next_move = math.floor(current_time - (time_to_pass)) if dist != float("inf") else 0
+
+                next_move = Decimal((current_time - (time_to_pass))).quantize(Decimal('1e-4')) if dist != float(
+                    "inf") else 0
+                # next_move = math.floor(current_time - (time_to_pass)) if dist != float("inf") else 0
                 if agent.src != new_dest:
                     move_queue.append(next_move)
                     if not bool(path):
                         poke = agent.get_pokemon()
-                        move_queue.append(math.floor(current_time - (time_to_pass * poke.get_ratio())))
+                        move_queue.append(
+                            Decimal((current_time - (time_to_pass * poke.get_ratio()))).quantize(Decimal('1e-4')))
+                        # move_queue.append(math.floor(current_time - (time_to_pass * poke.get_ratio())))
 
                 payload = {"agent_id": agent._id, "next_node_id": new_dest}
                 payload_list.append(payload)

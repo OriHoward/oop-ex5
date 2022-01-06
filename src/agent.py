@@ -17,7 +17,7 @@ class Agent:
             self._pos = Position(*pos)
         else:
             self._pos = Position()
-        self.icon_path: str = "../misc/pokeball.png"
+        self.icon_path: str = "../misc/agent.png"
         self.refresh_interval: float = 0
         self.curr_interval: float = 0
         self.curr_pokemon: Pokemon = None
