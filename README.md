@@ -1,5 +1,5 @@
 # oop-ex5
-![](./misc/video-demonstration.mov)
+![](https://gifs.com/gif/pokemon-game-demo-r2BZ1p)
 
 ## how to we run the code ?
 
