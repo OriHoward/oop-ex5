@@ -18,16 +18,23 @@ class GameUI:
         self.caption = caption
         self.icon = icon
         self.clock = time.Clock()
-        self.pygame_setup()
+        self._pygame_setup()
         self.proportions: dict = {}
         self.game_buttons: list[Button] = []
 
-    def pygame_setup(self):
+    def _pygame_setup(self):
+        """
+        Setup for pygame window icon and title.
+        These are constant and initialized in the constructor.
+        """
         icon = pygame.image.load(self.icon)
         pygame.display.set_icon(icon)
         pygame.display.set_caption(self.caption)
 
     def draw_circles(self, pos, key=None, c_color=CIRCLE_COLOR, t_color=TEXT_COLOR):
+        """
+        Draw a filled circle on the surface with an option to display text on top of the circle.
+        """
         gfxdraw.filled_circle(self.screen, int(pos.get_scaled_x()), int(pos.get_scaled_y()), 15, c_color)
         if key is not None:
             id_surface = self.game_font.render(str(key), True, t_color)
@@ -54,10 +61,11 @@ class GameUI:
         graph_proportions["y_proportions"] = (min_y, max_y)
         self.proportions = graph_proportions
 
-    def draw(self, obj_to_draw: Drawable):
+    def draw_icon(self, obj_to_draw: Drawable):
         icon = pygame.image.load(obj_to_draw.get_icon_path())
         scaled_image = pygame.transform.scale(icon, obj_to_draw.get_icon_proportions())
-        rect = scaled_image.get_rect(center=(obj_to_draw.get_pos().get_scaled_x(), obj_to_draw.get_pos().get_scaled_y()))
+        rect = scaled_image.get_rect(
+            center=(obj_to_draw.get_pos().get_scaled_x(), obj_to_draw.get_pos().get_scaled_y()))
         self.screen.blit(scaled_image, rect)
 
     def scale_positions(self, objects_to_scale):
