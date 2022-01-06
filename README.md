@@ -2,8 +2,11 @@
 
 ## how to we run the code ?
 
+The command below executes the simulation, `stage number` should be replaces with a number between 0 and 15
+
 ```shell
 pip install -r requirements.txt
+java -jar Ex4_Server_v0.0.jar <stage number>
 python src/main.py
 ```
 
@@ -13,8 +16,13 @@ Eitan Kats, Adi Yafe, Ori Howard
 
 ## Game details
 
-in this assigment we were asked to create a Pokémon game, the game is displayed on a directed graph and has 16 levels (0- 15).   
-  each level has a different number of agents and Pokémons.
+in this assigment we were asked to create a Pokémon game, the game is displayed on a directed graph and has 16 levels (
+0- 15).   
+each level has a different number of agents and Pokémons.
+
+The algorithms that were used in this are:
+
+[dikstra](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
 
 ### Each Pokémon has
 
@@ -32,9 +40,9 @@ position - representing the position of the agent
 
 ### The main goal of the game
 
-the main goal is to navigate the agents in the directed graph in the fastest way to catch as many Pokémons as they
+The main goal is to navigate the agents in the directed graph in the fastest way to catch as many Pokémons as they
 can.  
-each Pokémon has a different value and each agent that catches a Pokémon gaining that value.  
+Each Pokémon has a different value and each agent that catches a Pokémon gaining that value.  
 every level contains a specific graph, number of agents and Pokémons.
 
 ## Game Design
@@ -68,9 +76,8 @@ if we are currently in T1 and it takes 2 seconds for the agent to pass the curre
 then the next render time will be T1-2.
 
 on the last "hop" that the agent performs we are pushing 2 time stamps to the render queue one is the timestamp to catch
-Pokémon and the 2nd one is to hop to the next node.
-the calculation of the render time for the Pokémon catch is with respect to the ratio of the Pokémon on the edge
-
+Pokémon and the 2nd one is to hop to the next node. the calculation of the render time for the Pokémon catch is with
+respect to the ratio of the Pokémon on the edge
 
 ## Idea of Implementation
 
@@ -98,13 +105,14 @@ the calculation of the render time for the Pokémon catch is with respect to the
 
 ### DiGraph
 
-This is an implementation of the `GraphInterface`. The details about the design of this class are in
-the [Idea of Implementation section](#idea-of-implementation).
+The DiGraph is used to hold the graph that is that represents the current scenario.
+
+This graph is a directed weighted graph
 
 ### GraphAlgo
 
-This class implements the `GraphAlgoInterface` interface. It contains the implementation of Dijkstra, dfs, tsp,
-plot_graph as described above.
+Graph Algo contains the implementation of Dijkstra (from ex-3) and additional code that loads the graph from a given
+file
 
 ### GraphEdge
 
@@ -114,14 +122,43 @@ An object representing an edge in the graph.
 
 An object representing a node in the graph.
 
+### Agent
+
+This is a class that represents the agents that need to chase the Pokémon that spawn on the graph
+
+### Pokémon
+
+This is a class that represents the Pokémon that are spread out on the graph
+
 ### Position
 
-An object representing the location of the node, this is used in the GUI to draw the nodes.
+An object representing the location of the an object that we draw on the screen.
+
+This class also knows how to scale the object according to given proportions
+
+### GameHandler
+
+The `GameHandler` is an implementation of the Decorator Design pattern, we Decorate the client and use the GameHandler
+to communicate with the server.
+
+The GameHandler also has the main algorithms that are being executed in the game loop
+
+### GameUI
+
+The `GameUI` class is used to draw objects that participate in the game onto the screen.
+
+The game proportions are being calculated here using the proportions of the graph, objects that are being drawn onto the
+screen are scaled here aswell
+
+### Drawable
+
+This is an abstract class that represents a drawable object that has a positions and an icon, mainly used to draw the
+agents and Pokémon
 
 ## Detailed Execution Details of the Algorithms
-
-![](./misc/pcSpecs.png "Computer specs")
 
 ## UML
 
 ![](./misc/UML.png)
+
+Icons were taken from : https://flaticon.com
