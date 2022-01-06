@@ -6,10 +6,15 @@
 The command below executes the simulator.
 `stage number` should be replaced with a number between 0 and 15.
 
+On one shell execute:
+```shell
+java -jar Ex4_Server_v0.0.jar <stage number>
+```
+on the other shell:
 ```shell
 pip install -r requirements.txt
-java -jar Ex4_Server_v0.0.jar <stage number>
-python src/main.py
+cd src
+python main.py
 ```
 
 ## Contributors
@@ -51,12 +56,12 @@ The goal is to navigate the agents in the directed graph in the fastest way to c
 
 How we used it:
 
-0) Fetch the information of the chosen level from the server.
-1) Parse the Pokémon.
+1) Fetch the information of the chosen level from the server.
+2) Parse the Pokémon.
     1) Send a request to the server to get the json that represents the Pokémon and assign each Pokémon to the
        corresponding edge.
     2) Calculate the estimated location of the Pokémon on the edge (ratio).
-2) Create the amount of agents participating in the current level and assign near Pokémons with the highest values.
+3) Create the amount of agents participating in the current level and assign near Pokémons with the highest values.
 
 The `GameUI` class is responsible for drawing and scaling the objects.
 
