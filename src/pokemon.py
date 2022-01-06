@@ -29,10 +29,9 @@ class Pokemon(Drawable):
         if self._pos is None:
             raise Exception
         return self._pos
-
-    def set_activity(self, new_status) -> None:
-        self._is_active = new_status
-
+    """
+        If the pokemon is assigned to an agent we set its assigned value to true
+    """
     def set_assigned(self, new_status) -> None:
         self._is_assigned = new_status
 
@@ -41,9 +40,15 @@ class Pokemon(Drawable):
 
     def get_edge(self) -> GraphEdge:
         return self._edge
-
+    """
+        the identifier is the unique key of the dict
+    """
     def get_identifier(self) -> tuple[float, float, int]:
         return self._pos.get_x(), self._pos.get_y(), self.get_type()
+
+    """
+        Checks if a pokemon is on a specific edge
+    """
 
     def is_between(self, src: GraphNode, dest: GraphNode) -> bool:
         """
@@ -56,12 +61,22 @@ class Pokemon(Drawable):
         d3 = src.get_pos().distance(dest.get_pos())
         return True if fabs(d1 + d2 - d3) <= math.pow(10, -5) else False
 
+    """
+        Each pokemon has a ratio attribute 
+        This function calculates the ratio of the pokemon according to its edge
+        E.g: if the edge length is 10 and the pokemon is exactly in the middle the ratio will be 0.5
+    """
+
     def set_ratio(self, graph):
         src_node = graph.get_node(self.get_edge().get_src())
         dest_node = graph.get_node(self.get_edge().get_dest())
         src_to_poke = src_node.get_pos().distance(self.get_pos())
         src_to_dest = src_node.get_pos().distance(dest_node.get_pos())
         self._ratio = src_to_poke / src_to_dest
+
+    """
+        Returns the ratio of the pokemon
+    """
 
     def get_ratio(self):
         return self._ratio
@@ -72,6 +87,11 @@ class Pokemon(Drawable):
     def get_icon_proportions(self):
         mod = (self._value // 5) * 3  # floor division
         return 35 + mod, 35 + mod
+
+    """
+        Returns true or false if the pokemon is assigned
+        Assigend pokemon means that we assigned an agent to catch this pokemon
+    """
 
     def get_assigned(self):
         return self._is_assigned
