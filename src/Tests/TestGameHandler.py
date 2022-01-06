@@ -26,9 +26,18 @@ class TestGameHandler(TestCase):
         self.game_handler.client.add_agent = MagicMock(return_value="{}")
         self.game_handler.client.update_pokemons = MagicMock(return_value="{}")
         self.game_handler.client.is_running = MagicMock(return_value=True)
+        self.game_handler.client.time_to_end = MagicMock(return_value=10)
 
     def test_update_agents(self):
-        self.fail()
+        self.game_handler.parse_game_info()
+        # this is freeing the second agent
+        original_agent = self.test_agent_data.get("Agents")[1]
+        original_agent_dest = original_agent.get("Agent").get("dest")
+        self.test_agent_data.get("Agents")[1].get("Agent")['dest'] = 12
+        self.game_handler.client.get_agents = MagicMock(return_value=json.dumps(self.test_agent_data))
+        self.game_handler.update_agents()
+        updated_agent = list(self.game_handler.agents.values())[1]
+        self.assertNotEqual(original_agent_dest, updated_agent.dest)
 
     def test_create_agents(self):
         self.game_handler.parse_game_info()
@@ -82,6 +91,3 @@ class TestGameHandler(TestCase):
         first_agent_path, second_agent_path = self.game_handler.agents_map.values()
         self.assertEqual(actual_fastest_path, first_agent_path)
         self.assertEqual([], second_agent_path)
-
-    def test_choose_next_edge(self):
-        self.fail()
