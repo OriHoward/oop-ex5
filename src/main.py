@@ -23,8 +23,6 @@ def main():
     clientos = game_handler.get_client()
     game_handler.start_game()
 
-    game_ui_handler.pygame_setup()
-
     game_info = ""
 
     b = Button("Stop Game", game_ui_handler.game_font, (100, 30), (0, 0))
@@ -58,10 +56,10 @@ def main():
                 game_ui_handler.draw_circles(node.get_pos(), node.get_key())
 
             for poke_to_draw in game_handler.parsed_pokemons.values():
-                game_ui_handler.draw(poke_to_draw)
+                game_ui_handler.draw_icon(poke_to_draw)
 
             for agent_to_draw in game_handler.agents.values():
-                game_ui_handler.draw(agent_to_draw)
+                game_ui_handler.draw_icon(agent_to_draw)
 
             if bool(move_queue) and float(clientos.time_to_end()) <= move_queue[0] and move_counter < move_bound:
                 move_queue.pop(0)
@@ -73,7 +71,6 @@ def main():
 
             game_ui_handler.display_buttons()
             game_handler.update_agents()
-            game_ui_handler.scale_positions(game_handler.agents.values())
             game_handler.update_pokemons()
             game_info = clientos.get_info()
             game_ui_handler.show_game_info(game_info, clientos.time_to_end())
@@ -83,6 +80,7 @@ def main():
 
             display.update()
             game_ui_handler.clock.tick(60)
+
     except Exception as e:
         print(f"Game has ended {e}")
 
