@@ -33,9 +33,8 @@ def main():
     move_queue = []
     move_counter = 0
     move_bound = math.ceil(float(client_os.time_to_end()) / 1000) * 10
-    tmp_cntr = 0
     try:
-        while game_handler.is_running() == 'true' and float(client_os.time_to_end()) > 3:
+        while game_handler.is_running() == 'true':
             game_ui_handler.reset_color()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -65,12 +64,10 @@ def main():
                 game_ui_handler.draw(agent_to_draw)
 
             if bool(move_queue) and float(client_os.time_to_end()) <= move_queue[0] and move_counter < move_bound:
-                # print(move_queue)
                 move_queue.pop(0)
                 client_os.move()
                 move_counter += 1
             elif not bool(move_queue) and move_counter < move_bound:
-                tmp_cntr += 1
                 client_os.move()
                 move_counter += 1
 
@@ -90,19 +87,7 @@ def main():
         print(f"Game has ended {e}")
 
     print(game_info)
-    print(tmp_cntr, move_bound)
 
 
 if __name__ == '__main__':
     main()
-
-# WITH ELIF {"GameServer":{"pokemons":6,"is_logged_in":false,"moves":600,"grade":1644,"game_level":11,"max_user_level":-1,"id":0,"graph":"data/A2","agents":3}}
-# WITHOUT ELIF {"GameServer":{"pokemons":6,"is_logged_in":false,"moves":600,"grade":1630,"game_level":11,"max_user_level":-1,"id":0,"graph":"data/A2","agents":3}}
-
-# WITH ELIF {"GameServer":{"pokemons":4,"is_logged_in":false,"moves":242,"grade":480,"game_level":9,"max_user_level":-1,"id":0,"graph":"data/A2","agents":1}}
-# WITH ELIF {"GameServer":{"pokemons":4,"is_logged_in":false,"moves":231,"grade":455,"game_level":9,"max_user_level":-1,"id":0,"graph":"data/A2","agents":1}}
-# with elif and rounding mode half down {"GameServer":{"pokemons":4,"is_logged_in":false,"moves":248,"grade":487,"game_level":9,"max_user_level":-1,"id":0,"graph":"data/A2","agents":1}}
-# with elif and rounding mode half up {"GameServer":{"pokemons":4,"is_logged_in":false,"moves":244,"grade":469,"game_level":9,"max_user_level":-1,"id":0,"graph":"data/A2","agents":1}}
-
-
-# WITH ELIF {"GameServer":{"pokemons":5,"is_logged_in":false,"moves":117,"grade":333,"game_level":4,"max_user_level":-1,"id":0,"graph":"data/A1","agents":1}}
