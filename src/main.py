@@ -20,7 +20,7 @@ def main():
     game_ui_handler = GameUI(screen)
     graphi = game_handler.get_graph()
 
-    client_os = game_handler.get_client()
+    clientos = game_handler.get_client()
     game_handler.start_game()
 
     game_ui_handler.pygame_setup()
@@ -32,7 +32,7 @@ def main():
     game_ui_handler.add_button(b)
     move_queue = []
     move_counter = 0
-    move_bound = math.ceil(float(client_os.time_to_end()) / 1000) * 10
+    move_bound = math.ceil(float(clientos.time_to_end()) / 1000) * 10
     try:
         while game_handler.is_running() == 'true':
             game_ui_handler.reset_color()
@@ -63,20 +63,20 @@ def main():
             for agent_to_draw in game_handler.agents.values():
                 game_ui_handler.draw(agent_to_draw)
 
-            if bool(move_queue) and float(client_os.time_to_end()) <= move_queue[0] and move_counter < move_bound:
+            if bool(move_queue) and float(clientos.time_to_end()) <= move_queue[0] and move_counter < move_bound:
                 move_queue.pop(0)
-                client_os.move()
+                clientos.move()
                 move_counter += 1
             elif not bool(move_queue) and move_counter < move_bound:
-                client_os.move()
+                clientos.move()
                 move_counter += 1
 
             game_ui_handler.display_buttons()
             game_handler.update_agents()
             game_ui_handler.scale_positions(game_handler.agents.values())
             game_handler.update_pokemons()
-            game_info = client_os.get_info()
-            game_ui_handler.show_game_info(game_info, client_os.time_to_end())
+            game_info = clientos.get_info()
+            game_ui_handler.show_game_info(game_info, clientos.time_to_end())
             game_handler.find_path()
             game_handler.choose_next_edge(move_queue)
             move_queue = sorted(move_queue, reverse=True)

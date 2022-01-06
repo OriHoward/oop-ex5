@@ -100,6 +100,12 @@ class GameHandler:
         except Exception as e:
             print(f"error.. no graph was loaded from json {e}")
 
+    def get_agents(self):
+        return self.agents
+
+    def get_parsed_pokemons(self):
+        return self.parsed_pokemons
+
     def is_running(self):
         return self.client.is_running()
 

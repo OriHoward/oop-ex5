@@ -24,7 +24,6 @@ class TestGameHandler(TestCase):
         self.game_handler.client.get_pokemons = MagicMock(return_value=json.dumps(self.test_pokemon_data))
         self.game_handler.client.get_agents = MagicMock(return_value=json.dumps(self.test_agent_data))
         self.game_handler.client.add_agent = MagicMock(return_value="{}")
-        self.game_handler.client.update_pokemons = MagicMock(return_value="{}")
         self.game_handler.client.is_running = MagicMock(return_value=True)
         self.game_handler.client.time_to_end = MagicMock(return_value=10)
 
@@ -37,7 +36,7 @@ class TestGameHandler(TestCase):
         self.game_handler.client.get_agents = MagicMock(return_value=json.dumps(self.test_agent_data))
         self.game_handler.update_agents()
         updated_agent = list(self.game_handler.agents.values())[1]
-        self.assertNotEqual(original_agent_dest, updated_agent.dest)
+        self.assertNotEqual(original_agent_dest, updated_agent.get_dest())
 
     def test_create_agents(self):
         self.game_handler.parse_game_info()
@@ -49,8 +48,8 @@ class TestGameHandler(TestCase):
 
     def test_parse_game_info(self):
         self.game_handler.parse_game_info()
-        self.assertEqual(1, len(self.game_handler.parsed_pokemons.values()))
-        self.assertEqual(2, len(self.game_handler.agents.values()))
+        self.assertEqual(2, len(self.game_handler.get_parsed_pokemons().values()))
+        self.assertEqual(2, len(self.game_handler.get_agents().values()))
 
     def test_update_pokemons(self):
         self.game_handler.parse_game_info()
@@ -80,14 +79,14 @@ class TestGameHandler(TestCase):
         self.game_handler.parse_game_info()
         self.game_handler.find_path()
         actual_fastest_path = [0, 10, 9]
-        first_agent_path, second_agent_path = self.game_handler.agents_map.values()
-        self.assertEqual(actual_fastest_path, first_agent_path)
-        self.assertEqual([], second_agent_path)
+        first_agent, second_agent = self.game_handler.get_agents().values()
+        self.assertEqual(actual_fastest_path, first_agent.get_assigned_path())
+        self.assertEqual([], second_agent.get_assigned_path())
         pokemon_list = list(self.game_handler.parsed_pokemons.values())
         self.assertTrue(pokemon_list[0]._is_assigned)
         # this is freeing the second agent
         self.test_agent_data.get("Agents")[1]['dest'] = -1
         self.game_handler.find_path()
-        first_agent_path, second_agent_path = self.game_handler.agents_map.values()
-        self.assertEqual(actual_fastest_path, first_agent_path)
-        self.assertEqual([], second_agent_path)
+        first_agent, second_agent = self.game_handler.get_agents().values()
+        self.assertEqual(actual_fastest_path, first_agent.get_assigned_path())
+        self.assertEqual([], second_agent.get_assigned_path())
