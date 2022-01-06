@@ -56,5 +56,8 @@ class Agent:
     def set_placement(self, initial_spot):
         self.placement = initial_spot
 
+    def get_speed(self):
+        return self.speed
+
     def __repr__(self):
         return f"Agent: {self._id}, {self.value}, {self._pos}, {self.src}"

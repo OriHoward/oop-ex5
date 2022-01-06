@@ -16,6 +16,7 @@ class Pokemon:
         self.is_assigned: bool = False
         self.edge: GraphEdge = None
         self.icon_path: str = "../misc/mew.png" if _type > 0 else "../misc/bullbasaur.png"
+        self.ratio = 1
 
     def get_value(self):
         return self._value
@@ -53,6 +54,16 @@ class Pokemon:
         d2 = dest.get_pos().distance(self._pos)
         d3 = src.get_pos().distance(dest.get_pos())
         return True if fabs(d1 + d2 - d3) <= math.pow(10, -5) else False
+
+    def set_ratio(self, graph):
+        src_node = graph.get_node(self.get_edge().get_src())
+        dest_node = graph.get_node(self.get_edge().get_dest())
+        src_to_poke = src_node.get_pos().distance(self.get_pos())
+        src_to_dest = src_node.get_pos().distance(dest_node.get_pos())
+        self.ratio = src_to_poke / src_to_dest
+
+    def get_ratio(self):
+        return self.ratio
 
     def __repr__(self):
         return f"Pokemon: {self._value}, {self._pos}, {self._type}"

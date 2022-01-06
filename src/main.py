@@ -7,6 +7,7 @@ from pygame import display, constants, MOUSEBUTTONDOWN
 from GameHandler import GameHandler
 from GameUI import GameUI
 from ButtonUI import Button
+import math
 
 load_dotenv()
 
@@ -19,8 +20,9 @@ def main():
     game_ui_handler = GameUI(screen)
     graphi = game_handler.get_graph()
 
-    game_handler.start_game()
     client_os = game_handler.get_client()
+    game_handler.start_game()
+
     game_ui_handler.pygame_setup()
 
     game_info = ""
@@ -28,6 +30,9 @@ def main():
     b = Button("Stop Game", game_ui_handler.game_font, (100, 30), (0, 0))
     b.add_listener(game_handler.get_client().stop)
     game_ui_handler.add_button(b)
+    move_queue = []
+    move_counter = 0
+    move_bound = math.ceil(float(client_os.time_to_end()) / 1000) * 10
 
     try:
         while game_handler.is_running() == 'true':
@@ -57,12 +62,12 @@ def main():
                 game_ui_handler.draw(poke_to_draw)
 
             for agent_to_draw in game_handler.agents.values():
-                if agent_to_draw.curr_interval < agent_to_draw.refresh_interval:
-                    agent_to_draw.curr_interval += agent_to_draw.refresh_interval / 10
-                else:
-                    client_os.move()
-                    agent_to_draw.curr_interval = 0
                 game_ui_handler.draw(agent_to_draw)
+            if bool(move_queue) and float(client_os.time_to_end()) <= move_queue[0] and move_counter < move_bound:
+                print(move_queue)
+                print(move_queue.pop(0))
+                client_os.move()
+                move_counter += 1
 
             game_ui_handler.display_buttons()
             game_handler.update_agents()
@@ -71,12 +76,13 @@ def main():
             game_info = client_os.get_info()
             game_ui_handler.show_game_info(game_info, client_os.time_to_end())
             game_handler.find_path()
-            game_handler.choose_next_edge()
+            game_handler.choose_next_edge(move_queue)
+            move_queue = sorted(move_queue, reverse=True)
 
             display.update()
             game_ui_handler.clock.tick(60)
-    except:
-        print("Game has ended")
+    except Exception as e:
+        print(f"Game has ended {e}")
 
     print(game_info)
 

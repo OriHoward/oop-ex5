@@ -148,22 +148,31 @@ class GameHandler:
                 if pokemon.get_type() == -1:
                     chosen_edge = self.get_graph().get_edge(max_id, min_id)
                     pokemon.set_edge(chosen_edge)
+                    pokemon.set_ratio(self.get_graph())
                 else:
                     chosen_edge = self.get_graph().get_edge(min_id, max_id)
                     pokemon.set_edge(chosen_edge)
+                    pokemon.set_ratio(self.get_graph())
                 break
 
-    def choose_next_edge(self):
+    def choose_next_edge(self, move_queue: list = []):
         payload_list = []
         for agent, path in self.agents_map.items():
             if agent.dest == -1 and len(path) > 0:
                 new_dest = path.pop(0)
                 dist, _ = self.graph_algo.shortest_path(agent.src, new_dest)
-                if bool(path):
-                    agent.set_refresh_interval(dist)
+                current_time = float(self.client.time_to_end())
+                time_to_pass = (dist / agent.get_speed()) * 1000
+                next_move = math.floor(current_time - (time_to_pass)) if dist != float("inf") else 0
+                if agent.src != new_dest:
+                    move_queue.append(next_move)
+                    if not bool(path):
+                        poke = agent.get_pokemon()
+                        move_queue.append(math.floor(current_time - (time_to_pass * poke.get_ratio())))
 
                 payload = {"agent_id": agent._id, "next_node_id": new_dest}
                 payload_list.append(payload)
+
         if bool(payload_list):
             for payload in payload_list:
                 self.client.choose_next_edge(json.dumps(payload))
