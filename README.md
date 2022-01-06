@@ -22,7 +22,7 @@ each level has a different number of agents and Pokémons.
 
 The algorithms that were used in this are:
 
-[dikstra](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
+[dijkstra](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
 
 ### Each Pokémon has
 
@@ -47,7 +47,7 @@ every level contains a specific graph, number of agents and Pokémons.
 
 ## Game Design
 
-The 'brain' of the game is the `GameHanlder` which decorates the client module that communicates with the server.  
+The 'brain' of the game is the `GameHandler` which decorates the client module that communicates with the server.  
 The first thing we do is fetching the information about the current level from the server.
 
 1) We parse the Pokémon
