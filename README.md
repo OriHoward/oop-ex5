@@ -4,7 +4,7 @@
 ## How to Run the Code:
 
 The command below executes the simulator.
-`stage number` should be replaced with a number between 0 and 15.
+The `stage number` should be replaced with a number between 0 and 15.
 
 On one shell execute:
 ```shell
@@ -23,7 +23,7 @@ Eitan Kats, Adi Yafe, Ori Howard
 
 ## Game Details
 
-In this assigment we were asked to create a Pokémon game. The game is displayed on a directed graph and has 16 levels (
+In this assignment we were asked to create a Pokémon game. The game is displayed on a directed graph and has 16 levels (
 0-15).   
 Each level has a different number of agents and Pokémons.
 
@@ -111,7 +111,7 @@ the render time for the Pokémon catch is with respect to the ratio of the Poké
 2. dest - the id of the dest node
 3. weight - the weight of the edge
 
-## Class overview
+## Class Overview
 
 ### DiGraph
 
