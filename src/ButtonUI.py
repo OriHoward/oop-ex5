@@ -17,9 +17,15 @@ class Button:
         self.pos = position
 
     def add_listener(self, function):
+        """
+        Reference to function to execute when the button is clicked.
+        """
         self.listeners.append(function)
 
     def render(self, surface: Surface):
+        """
+        Display a button on the surface.
+        """
         self.rect.topleft = self.pos
         title_surface = self.button_font.render(self.title, True, self.text_color)
         title_rect = title_surface.get_rect(center=self.rect.center)
@@ -27,6 +33,9 @@ class Button:
         surface.blit(title_surface, title_rect)
 
     def is_pressed(self):
+        """
+        Executes function if left mouse button is pressed.
+        """
         if len(self.listeners) > 0:
             mouse_pos = pygame.mouse.get_pos()
             if self.rect.collidepoint(mouse_pos):
