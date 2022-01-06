@@ -16,6 +16,9 @@ class GameHandler:
         self.agents: dict[int, Agent] = {}
         self.parsed_pokemons: dict[tuple[float, float, int], Pokemon] = {}
 
+    """
+        update each agent -  position/value /etc..
+    """
     def update_agents(self, payload=None):
         try:
             if payload is None:
@@ -35,7 +38,9 @@ class GameHandler:
                 curr_agent.update_agent(**agent_info)
         except Exception as e:
             print(f"Bad agents Json from Server {e}")
-
+    """
+        Creates the agents by the given number from the server
+    """
     def create_agents(self, num_of_agents):
         payload = {}
         print(f"Initializing {num_of_agents} agents")
@@ -53,6 +58,10 @@ class GameHandler:
             self.client.add_agent(json.dumps(payload))
         self.update_agents()
 
+    """
+        Parsing all the game info from the server
+        to load the graph and to create the right amount of agents and pokemons etc..
+    """
     def parse_game_info(self):
         try:
             game_info = json.loads(self.client.get_info())
@@ -65,6 +74,9 @@ class GameHandler:
         except Exception as e:
             print(f"Couldn't parse game info : {e}")
 
+    """
+        Create the pokemons and updating them accordingly
+    """
     def update_pokemons(self):
         try:
             updated_pokemons = {}
@@ -85,6 +97,9 @@ class GameHandler:
         except Exception as e:
             print(f"Couldn't parse pokemons: {e}")
 
+    """
+        Starts the connection
+    """
     def init_connection(self):
         self.client.start_connection(os.getenv("HOST"), int(os.getenv("PORT")))
 
@@ -105,9 +120,16 @@ class GameHandler:
 
     def get_parsed_pokemons(self):
         return self.parsed_pokemons
-
+    """
+        Checks if the server is running
+    """
     def is_running(self):
         return self.client.is_running()
+
+    """
+        The function finds for each agent according to different calculations
+        the best path to catch a pokemon
+    """
 
     def find_path(self):
         for agent in self.agents.values():
@@ -136,6 +158,11 @@ class GameHandler:
                 agent.update_load_factor(dist_to_update)
                 agent.set_curr_pokemon(chosen_poke)
 
+    """
+        For each pokemon we create this function adds the current edge the pokemon
+        is 'sitting' on to its attributes
+    """
+
     def set_pokemon_edge(self, pokemon):
         for edge in self.get_graph().get_parsed_edges():
             src_node, dest_node = self.get_graph().get_node(edge.get_src()), self.get_graph().get_node(edge.get_dest())
@@ -150,6 +177,13 @@ class GameHandler:
                     pokemon.set_edge(chosen_edge)
                     pokemon.set_ratio(self.get_graph())
                 break
+
+    """
+        This function chooses the next edge the agent needs to move to.
+        The next edge is taken from the path each agent has.
+        It also calculates the right timing we need to move the agent to 
+        catch a pokemon
+    """
 
     def choose_next_edge(self, move_queue: list):
         payload_list = []
